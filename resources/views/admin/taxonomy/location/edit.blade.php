@@ -43,7 +43,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col s12">
+                                        {{-- <div class="col s12">
                                             <div class="form-group  {{$errors->has('name.'.$language->id.'') ? 'has-error' : ''}}">
                                                 <select name="country_id" class ="location-select form-control">
                                                     @foreach($countries as $country)
@@ -52,7 +52,7 @@
                                                 </select>
                                                 {{Form::label('name[country_id]', 'Country')}}
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col s12">
                                             {{Form::textarea('description['.$language->id.']', $location->content($language->id)->description, ['class' => 'hidden desc-content'])}}
                                             @if($errors->has('description.'.$language->id.''))

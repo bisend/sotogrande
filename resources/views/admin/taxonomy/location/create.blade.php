@@ -17,7 +17,7 @@
         <div class="panel-heading">
             <ul class="nav nav-tabs">
                 <li class="tab active"><a href="#content-panel" data-toggle="tab">{{get_string('content')}}</a></li>
-                <!-- <li class="tab"><a href="#data-panel" data-toggle="tab">{{get_string('data')}}</a></li> -->
+                {{-- <li class="tab"><a href="#data-panel" data-toggle="tab">{{get_string('data')}}</a></li> --}}
             </ul>
         </div>
         <div class="panel-body">
@@ -44,7 +44,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col s12">
+                                        {{-- <div class="col s12">
                                             <div class="form-group  {{$errors->has('name.'.$language->id.'') ? 'has-error' : ''}}">
                                                 <select name="country_id" class ="location-select form-control">
                                                     @foreach($countries as $country)
@@ -53,7 +53,7 @@
                                                 </select>
                                                 {{Form::label('name[country_id]', 'Country')}}
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col s12">
                                             {{Form::textarea('description['.$language->id.']', null, ['class' => 'hidden desc-content'])}}
                                             @if($errors->has('description.'.$language->id.''))
@@ -67,12 +67,12 @@
                     </div>
                 </div>
                 <div id="data-panel" class="tab-pane">
-                    <!-- <div class="col m8 s6 left left-align mbot0">
+                    {{-- <div class="col m8 s6 left left-align mbot0">
                         <div class="form-group">
                             {{Form::number('order', 0, ['class' => 'form-control', 'min' => '0', 'step' => 1, 'placeholder' => get_string('order')])}}
                             {{Form::label('order', get_string('order'))}}
                         </div>
-                    </div> -->
+                    </div> --}}
                 </div>
             </div>
             <div class="col clearfix s12 mtop10">

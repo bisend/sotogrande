@@ -101,7 +101,7 @@
 	</style>
 </head>
 <body>
-	<header>
+	{{-- <header>
         <div class="logo-container">
             <img
                 class="logo"
@@ -109,7 +109,7 @@
                 alt="Logo"
             >
         </div>
-    </header>
+    </header> --}}
     <main class="container">
         @php($imgCounter = 0)
         @if( ! empty($property->images) && count($property->images) > 0)
@@ -198,20 +198,22 @@
                 @endif
             </ul>
         </div>
-        <div>
-            <h4>Amenities</h4>
-            <div class="amen">
-                @foreach($features as $feature)
-                    @foreach($property->features as $propertyFeature)
-                        @if($propertyFeature == $feature->id)
-                            <span>
-                                {{ $feature->feature[$default_language->id] }}
-                            </span>
-                        @endif
+        @if( ! empty($property->features) && count($property->features) > 0)
+            <div>
+                <h4>Amenities</h4>
+                <div class="amen">
+                    @foreach($features as $feature)
+                        @foreach($property->features as $propertyFeature)
+                            @if($propertyFeature == $feature->id)
+                                <span>
+                                    {{ $feature->feature[$language->id] }}
+                                </span>
+                            @endif
+                        @endforeach
                     @endforeach
-                @endforeach
+                </div>
             </div>
-        </div>
+        @endif
         <div>
             <h2 class="property-title">{{ $property->contentload['name'] }}</h2>
             <div>

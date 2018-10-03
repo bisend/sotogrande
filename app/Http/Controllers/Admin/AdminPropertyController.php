@@ -30,20 +30,23 @@ class AdminPropertyController extends Controller
 {
     private $validation_rules, 
             $validation_messages;
+
     protected $languages;
+
     protected $static_data;
+
     public function __construct(Request $request){
         $this->static_data = static_home();
-        //dd($request->all());
+        
         $this->validation_rules = [
             // 'business_hours.sat'      => 'business_hours',
             // 'business_hours.week'     => 'business_hours',
             // 'business_hours.sun'      => 'business_hours',
             // 'currency_id'               => 'required',
             'category_id'             => 'required',
-            'sale_rent'             => 'required',
+            'sale_rent'               => 'required',
             // 'type_id'              => 'required',
-            'country_id'             => 'required',
+            // 'country_id'              => 'required',
             'location_id'             => 'required',
             // 'location.address'        => 'required',
             // 'location.city'           => 'required',
@@ -114,7 +117,7 @@ class AdminPropertyController extends Controller
             'property_info.bathrooms.required' => get_string('required_field'),
             'property_info.property_reference.required' => get_string('required_field'),
             'location_id.required' => get_string('required_field'),
-            'country_id.required' => get_string('required_field'),
+            // 'country_id.required' => get_string('required_field'),
         ];
         $this->languages = Language::all();
     }
@@ -172,7 +175,7 @@ class AdminPropertyController extends Controller
         $default_language = Language::where('default', 1)->first();
         $categories = CategoryContent::where('language_id', $default_language->id)->get()->pluck('name', 'category_id');
         $locations = Location::all();
-        $countries = CountryContent::where('language_id', $default_language->id)->get()->pluck('location', 'location_id');
+        // $countries = CountryContent::where('language_id', $default_language->id)->get()->pluck('location', 'location_id');
         $languages = $this->languages;
         $features = Feature::all();
         $currencies = Currency::all();
@@ -182,7 +185,7 @@ class AdminPropertyController extends Controller
             'features', 
             'default_language', 
             'locations', 
-            'countries',
+            // 'countries',
             'currencies'
         ));
     }
@@ -197,7 +200,7 @@ class AdminPropertyController extends Controller
     {
         $languages = $this->languages;
         // Validating the Property
-        if($this->validateService($request)){
+        if ($this->validateService($request)) {
             return $this->validateService($request);
         }
 
@@ -216,6 +219,10 @@ class AdminPropertyController extends Controller
             $data['sales'] = 1;
         } else if (in_array('rentals', $data['sale_rent'])) {
             $data['rentals'] = 1;
+        }
+
+        if ( ! isset($data['country_id'])) {
+            $data['country_id'] = 0;
         }
 
         $property = Property::create($data);
@@ -282,7 +289,7 @@ class AdminPropertyController extends Controller
 
         // Create available dates
         PropertyDate::create(['dates' => null, 'property_id' => $property->id]);
-        $this->createPdfFile($property);
+        $this->createPdfFile($property->id);
         // Redirect after saving
         return redirect('admin/property');
     }
@@ -310,7 +317,7 @@ class AdminPropertyController extends Controller
         $categories = CategoryContent::where('language_id', $default_language->id)->get()->pluck('name', 'category_id');
         $languages = $this->languages;
         $locations = Location::all();
-        $countries = CountryContent::where('language_id', $default_language->id)->get()->pluck('location', 'location_id');
+        // $countries = CountryContent::where('language_id', $default_language->id)->get()->pluck('location', 'location_id');
         $features = Feature::all();
         $property = Property::findOrFail($id);
         $currencies = Currency::all();
@@ -321,7 +328,7 @@ class AdminPropertyController extends Controller
             'languages', 
             'features', 
             'locations', 
-            'countries',
+            // 'countries',
             'currencies'
         ));
     }
@@ -441,7 +448,7 @@ class AdminPropertyController extends Controller
             $category_content = PropertyContent::where(['language_id' => $language->id, 'property_id' => $id])->first();
             $category_content->update($data);
         }
-        $this->createPdfFile($property);
+        $this->createPdfFile($property->id);
 
         // Redirect after saving
         return redirect('admin/property');
@@ -637,7 +644,29 @@ class AdminPropertyController extends Controller
 
         $validator = Validator::make($request->all(), $this->validation_rules, $this->validation_messages);
 
-        if($validator->fails()){
+        foreach($languages as $language) {
+            $validator = Validator::make($request->all(), [
+                'name.' . $language->id . '' => 'required|max:50',
+                'description.' . $language->id . '' => 'required|min:100|max:5000',
+            ], [
+                'name.'.$language->id.'.required'           => get_string('required_field'),
+                'name.'.$language->id.'.max'         => get_string('max_100'),
+                'description.'.$language->id.'.required'    => get_string('required_field'),
+                'description.'.$language->id.'.min'         => get_string('min_100'),
+            ]);
+            if($validator->fails()) {
+                // if (isset($request->images)) {
+                //     foreach ($request->images as $image) {
+                //         $path = public_path('images/data/' . $image);
+                //         if (File::exists($path)) {
+                //             File::delete($path);
+                //         }
+                //     }
+                // }
+                return Redirect::back()->withInput()->withErrors($validator);
+            }
+        }
+        // if($validator->fails()){
             // if(isset($request->images)){
             //     foreach($request->images as $image){
             //         $path = public_path('images/data/'.$image);
@@ -646,31 +675,10 @@ class AdminPropertyController extends Controller
             //         }
             //     }
             // }
-            return Redirect::back()->withInput()->withErrors($validator);
-        }else{
-            foreach($languages as $language) {
-                $validator = Validator::make($request->all(), [
-                    'name.' . $language->id . '' => 'required|max:50',
-                    'description.' . $language->id . '' => 'required|min:100|max:5000',
-                ], [
-                    'name.'.$language->id.'.required'           => get_string('required_field'),
-                    'name.'.$language->id.'.max'         => get_string('max_100'),
-                    'description.'.$language->id.'.required'    => get_string('required_field'),
-                    'description.'.$language->id.'.min'         => get_string('min_100'),
-                ]);
-                if($validator->fails()) {
-                    // if (isset($request->images)) {
-                    //     foreach ($request->images as $image) {
-                    //         $path = public_path('images/data/' . $image);
-                    //         if (File::exists($path)) {
-                    //             File::delete($path);
-                    //         }
-                    //     }
-                    // }
-                    return Redirect::back()->withInput()->withErrors($validator);
-                }
-            }
-        }
+            // return Redirect::back()->withInput()->withErrors($validator);
+        // }else{
+            
+        // }
     }
 
     // Validating the Property upon updating
@@ -805,21 +813,29 @@ class AdminPropertyController extends Controller
             }
         }
 
-        //deleting pdf
-        if ($property->pdfFile) {
-            $path = public_path("/files/" . $property->pdfFile->file_name . ".pdf");
-
-            if(File::exists($path)){
-                File::delete($path);
-            }
-
-            $property->pdfFile->delete();
-        }
-
         // Deleting the Content
         $languages = $this->languages;
         foreach($languages as $language){
             $property->content($language->id)->delete();
+        }
+
+        foreach($languages as $language) {
+            $propertyForPdf = Property::with([
+                'pdfFile' => function ($query) use ($language) {
+                    $query->where('language_id', $language->id);
+                }
+            ])->findOrFail($id);
+
+            //deleting pdf
+            if ($propertyForPdf->pdfFile) {
+                $path = public_path("/files/" . $propertyForPdf->pdfFile->file_name . ".pdf");
+
+                if(File::exists($path)) {
+                    File::delete($path);
+                }
+
+                $propertyForPdf->pdfFile->delete();
+            }
         }
 
         $property->prop_dates()->delete();
@@ -888,29 +904,102 @@ class AdminPropertyController extends Controller
         }
     }
 
-    public function createPdfFile($property)
+    public function createPdfFile($propertyId)
     {
         $static_data = $this->static_data;
+        $languages = Language::all();
         $default_language = Language::where('default', 1)->first();
         $features = Feature::all();
-        $fileName = Carbon::now()->format('Y_m_d_H_i_s_u').'_'.str_replace(' ', '_', $property->contentload['name']);
-        if ($property->pdfFile) {
-            $path = public_path("/files/" . $property->pdfFile->file_name . ".pdf");
-            $propertyPdfFile = PropertyPdfFile::where('property_id', $property->id)->first();
-            if(File::exists($path)) {
-                File::delete($path);
+        foreach ($languages as $language) {
+
+            $property = Property::with([
+                'pdfFile' => function ($query) use ($language) {
+                    $query->where('language_id', $language->id);
+                },
+                'contentload' => function ($query) use ($language) {
+                    $query->where('language_id', $language->id);
+                }
+            ])
+            ->where('id', $propertyId)
+            ->first();
+
+            $fileName = Carbon::now()
+            ->format('Y_m_d_H_i_s_u') . '_' . str_replace(' ', '_', $property->contentload['name']) . '_' . $language->code;
+            
+            if ($property->pdfFile) {
+                $path = public_path("/files/" . $property->pdfFile->file_name . ".pdf");
+                $propertyPdfFile = PropertyPdfFile::where('property_id', $property->id)
+                ->where('language_id', $language->id)
+                ->first();
+                if (File::exists($path)) {
+                    File::delete($path);
+                }
+                $propertyPdfFile->update([
+                    'name' => $property->alias, 
+                    'language_id' => $language->id,
+                    'file_name' => $fileName, 
+                    'path' => public_path().'/files/'.$fileName.'.pdf'
+                ]);
+            } else {
+                $propertyPdfFile = PropertyPdfFile::create([
+                    'property_id' => $property->id, 
+                    'language_id' => $language->id,
+                    'name' => $property->alias,  
+                    'file_name' => $fileName, 
+                    'path' => public_path().'/files/'.$fileName.'.pdf'
+                ]);
             }
-            $propertyPdfFile->update(['name' => $property->alias,  'file_name' => $fileName, 'path' => url('/').'/files/'.$fileName.'.pdf']);
-        } else {
-            $propertyPdfFile = PropertyPdfFile::create(['property_id' => $property->id, 'name' => $property->alias,  'file_name' => $fileName, 'path' => public_path().'/files/'.$fileName.'.pdf']);
-        }
-        $pdf = PDF::setOptions([
+            $pdf = PDF::setOptions([
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true, 
                 'defaultFont' => 'sans-serif'
             ])
-            ->loadView('realstate.pdf.property', compact('property', 'features', 'default_language', 'static_data'))
+            ->loadView('realstate.pdf.property', compact(
+                'property', 
+                'features', 
+                'default_language', 
+                'language',
+                'static_data'
+            ))
             ->save(public_path('/files/'.$fileName.'.pdf'));
+        }
+
+
+
+
+
+
+        // if ($property->pdfFile) {
+        //     $path = public_path("/files/" . $property->pdfFile->file_name . ".pdf");
+        //     $propertyPdfFile = PropertyPdfFile::where('property_id', $property->id)->first();
+        //     if (File::exists($path)) {
+        //         File::delete($path);
+        //     }
+        //     $propertyPdfFile->update([
+        //         'name' => $property->alias, 
+        //         'file_name' => $fileName, 
+        //         'path' => url('/').'/files/'.$fileName.'.pdf'
+        //     ]);
+        // } else {
+        //     $propertyPdfFile = PropertyPdfFile::create([
+        //         'property_id' => $property->id, 
+        //         'name' => $property->alias,  
+        //         'file_name' => $fileName, 
+        //         'path' => public_path().'/files/'.$fileName.'.pdf'
+        //     ]);
+        // }
+        // $pdf = PDF::setOptions([
+        //         'isHtml5ParserEnabled' => true,
+        //         'isRemoteEnabled' => true, 
+        //         'defaultFont' => 'sans-serif'
+        //     ])
+        //     ->loadView('realstate.pdf.property', compact(
+        //         'property', 
+        //         'features', 
+        //         'default_language', 
+        //         'static_data'
+        //     ))
+        //     ->save(public_path('/files/'.$fileName.'.pdf'));
     }
 
     public function setStatus (Request $request, $id)

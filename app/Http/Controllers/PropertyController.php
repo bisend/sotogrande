@@ -39,25 +39,35 @@ class PropertyController extends Controller
         $property = Property::with([
             'property_status',
             'currency',
-            'images', 'contentload' => function ($query) use ($default_language) {
-            $query->where('language_id', $default_language->id);
-        }])->where('status', 1)->where('alias', $alias)->first();
+            'images', 
+            'contentload' => function ($query) use ($default_language) {
+                $query->where('language_id', 2);
+        }])
+        ->where('status', 1)
+        ->where('alias', $alias)
+        ->first();
 
         if ( ! $property) {
             $property = Property::with([
                 'property_status',
                 'currency',
-                'images', 'contentload' => function ($query) use ($default_language) {
-                $query->where('language_id', $default_language->id);
-            }])->where('status', 1)->get()->filter(function($value) use($alias) {
+                'images', 
+                'contentload' => function ($query) use ($default_language) {
+                    $query->where('language_id', 2);
+            }])
+            ->where('status', 1)
+            ->get()
+            ->filter(function($value) use($alias) {
                 return $value->property_info['property_reference'] == $alias;
-            })->first();
+            })
+            ->first();
         }
         
         $features = Feature::all();
 
         if ($property) {
-            $title = $property->contentDefault->name;
+            // $title = $property->contentDefault->name;
+            $title = $property->contentload->name;
             // Get booked dates for calendar
             $dates = PropertyDate::where('property_id', $property->id)->pluck('dates')->toArray();
 

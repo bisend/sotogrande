@@ -38,7 +38,7 @@
                                 <a href="#">{{get_string('taxonomy')}}<i class="material-icons tiny">arrow_drop_down</i></a>
                                     <ul class="sub-menu">
                                     <li><a href="{{route('admin.taxonomy.category.index')}}">Categories</a></li>
-                                    <li><a href="{{route('admin.taxonomy.country.index')}}">Countries</a></li>
+                                    {{-- <li><a href="{{route('admin.taxonomy.country.index')}}">Countries</a></li> --}}
                                     <li><a href="{{route('admin.taxonomy.location.index')}}">Locations</a></li>
                                     <li><a href="{{route('admin_taxonomy_feature')}}">{{get_string('features')}}</a></li>
                                 </ul>
@@ -55,7 +55,8 @@
                                     {{-- <li><a href="{{route('admin_design_settings')}}">{{get_string('design_settings')}}</a></li> --}}
                                     {{-- <li><a href="{{route('admin_style_settings')}}">{{get_string('style_settings')}}</a></li> --}}
                                     {{-- <li><a href="{{route('admin_translator')}}">{{get_string('translator')}}</a></li> --}}
-                                    {{-- <li><a href="{{route('admin_language_settings')}}">{{get_string('lang_settings')}}</a></li>                                    <li><a href="{{route('admin_currency')}}">{{get_string('currencies')}}</a></li> --}}
+                                    <li><a href="{{route('admin_language_settings')}}">{{get_string('lang_settings')}}</a></li>
+                                    {{-- <li><a href="{{route('admin_currency')}}">{{get_string('currencies')}}</a></li> --}}
                                 </ul>
                             </li>
                         </ul>

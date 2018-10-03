@@ -3,7 +3,7 @@
 @section('title')
     <title>{{get_string('create_property') . ' - ' . get_setting('site_name', 'site')}}</title>
     <link href="/realstate/assets/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" media="screen">
-    <link  href="/assets/css/cropper.css" rel="stylesheet">
+    <link href="/assets/css/cropper.css" rel="stylesheet">
 
     <!-- Latest compiled and minified CSS -->
 <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
@@ -91,7 +91,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col m6 s6">
+                    {{-- <div class="col m6 s6">
                         <div class="form-group  {{$errors->has('country_id') ? 'has-error' : ''}}">
                             {{Form::select('country_id', $countries, 'Gibraltar', ['class' => 'country-select form-control', 'placeholder' => 'Select country'])}}
                             {{Form::label('country_id', 'Country')}} *
@@ -99,7 +99,7 @@
                                 <span class="wrong-error">* {{$errors->first('country_id')}}</span>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col m6 s6">
                         <div class="form-group  {{$errors->has('location_id') ? 'has-error' : ''}}">
                             {{-- {{Form::select('location_id', $locations, null, ['class' => 'location-select form-control country-', 'placeholder' => get_string('choose_location')])}} --}}
@@ -107,14 +107,14 @@
                                 class="location-select form-control" 
                                 placeholder="Select location">
                             <option value="" disabled="disabled" hidden="hidden" selected>Select location</option>
-                            @foreach($locations as $location)
-                                <option class="country-{{$location->country_id}}" 
-                                    value="{{$location->id}}" 
-                                    {{ $location->id == old('location_id') ? 'selected' : ''}}
-                                    >
-                                    {{$location->contentDefault->location}}
-                                </option>    
-                            @endforeach
+                                @foreach($locations as $location)
+                                    <option class="country-{{$location->country_id}}" 
+                                        value="{{$location->id}}" 
+                                        {{ $location->id == old('location_id') ? 'selected' : ''}}
+                                        >
+                                        {{$location->contentDefault->location}}
+                                    </option>    
+                                @endforeach
                             </select>
                             {{-- {{ old('location_id')}} --}}
                             {{Form::label('location_id', 'Location')}} *
@@ -472,7 +472,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col s12 clearfix">
+                    {{-- <div class="col s12 clearfix">
                         <h5 class="section-title">{{get_string('Currency')}}</h5>
                     </div>
                     <div class="col l6 m6 s12">
@@ -505,7 +505,7 @@
                                 <span class="wrong-error">* {{$errors->first('currency_id')}}</span>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col s12 clearfix">
                         <h5 class="section-title">{{get_string('property_prices')}}</h5>
                     </div>
@@ -1091,35 +1091,35 @@ if (URL) {
 
     <script>
         
-        var selectedCountryId = 0;
+        // var selectedCountryId = 0;
 
-        selectedCountryId = $('.country-select') ? $('.country-select').val() : 0;
+        // selectedCountryId = $('.country-select') ? $('.country-select').val() : 0;
 
-        function checkCountry () {
-            var country_id = selectedCountryId;
+        // function checkCountry () {
+        //     var country_id = selectedCountryId;
 
-            // $('#select_location_id').val('');
+        //     // $('#select_location_id').val('');
 
-            if (country_id == '') {
-                $(".location-select option" ).each(function() {
-                    $(this).show();
-                });
-            } else {
-                $(".location-select option").each(function() {
-                    if($(this).hasClass('country-' + country_id)) {
-                        $(this).show();
-                        $('.location-any').show();
-                    } else {
-                        $(this).hide();
-                        $('.location-any').show();
-                    }
-                });
-            }
-        }
+        //     if (country_id == '') {
+        //         $(".location-select option" ).each(function() {
+        //             $(this).show();
+        //         });
+        //     } else {
+        //         $(".location-select option").each(function() {
+        //             if($(this).hasClass('country-' + country_id)) {
+        //                 $(this).show();
+        //                 $('.location-any').show();
+        //             } else {
+        //                 $(this).hide();
+        //                 $('.location-any').show();
+        //             }
+        //         });
+        //     }
+        // }
 
         $(document).ready(function() {
 
-            checkCountry();
+            // checkCountry();
 
             $(document).on('change', 'input[name="files[]"]', function () {
                 var input = $(this)[0];

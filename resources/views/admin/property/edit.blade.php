@@ -3,7 +3,7 @@
 @section('title')
     <title>{{get_string('edit_property') . ' - ' . get_setting('site_name', 'site')}}</title>
     <link href="/realstate/assets/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" media="screen">
-    <link  href="/assets/css/cropper.css" rel="stylesheet">
+    <link href="/assets/css/cropper.css" rel="stylesheet">
 
 @endsection
 
@@ -105,7 +105,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col m6 s6">
+                    {{-- <div class="col m6 s6">
                         <div class="form-group  {{$errors->has('country_id') ? 'has-error' : ''}}">
                             <select class="country-select form-control" 
                                 name="country_id">
@@ -115,14 +115,14 @@
                                         {{$property->country_id == $key ? 'selected' : ''}}
                                     >{{$country}}</option>
                                 @endforeach
-                            </select>
+                            </select> --}}
                             {{-- {{Form::select('country_id', $countries, $property->country_id, ['class' => 'country-select form-control', 'placeholder' => 'Select country'])}} --}}
-                            {{Form::label('country_id', 'Country')}} *
+                            {{-- {{Form::label('country_id', 'Country')}} *
                             @if($errors->has('country_id'))
                                 <span class="wrong-error">* {{$errors->first('country_id')}}</span>
                             @endif
                         </div>
-                    </div>  
+                    </div>   --}}
                     <div class="col m6 s6">
                         <div class="form-group  {{$errors->has('location_id') ? 'has-error' : ''}}">
                             {{-- {{Form::select('location_id', $locations, null, ['class' => 'location-select form-control country-', 'placeholder' => get_string('choose_location')])}} --}}
@@ -456,7 +456,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col s12 clearfix">
+                    {{-- <div class="col s12 clearfix">
                         <h5 class="section-title">{{get_string('Currency')}}</h5>
                     </div>
                     <div class="col l6 m6 s12">
@@ -478,7 +478,7 @@
                                 <span class="wrong-error">* {{$errors->first('currency_id')}}</span>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="col s12 clearfix">
                         <h5 class="section-title">{{get_string('property_prices')}}</h5>
                     </div>
@@ -1574,36 +1574,36 @@ if (URL) {
                 }
             });
 
-            $('.country-select').on('change', function () {
-                var country_id = $(this).val();
-                $('#select_location_id').val('');
-                if(country_id == ''){
-                    $(".location-select option" ).each(function() {
-                            $(this).show();
-                    });
-                }else{
-                    $(".location-select option").each(function() {
-                        if($(this).hasClass('country-'+country_id)){
-                            $(this).show();
-                            $('.location-any').show();
-                        }else{
-                            $(this).hide();
-                            $('.location-any').show();
-                        }
-                    });
-                }
-            });
+            // $('.country-select').on('change', function () {
+            //     var country_id = $(this).val();
+            //     $('#select_location_id').val('');
+            //     if(country_id == ''){
+            //         $(".location-select option" ).each(function() {
+            //                 $(this).show();
+            //         });
+            //     }else{
+            //         $(".location-select option").each(function() {
+            //             if($(this).hasClass('country-'+country_id)){
+            //                 $(this).show();
+            //                 $('.location-any').show();
+            //             }else{
+            //                 $(this).hide();
+            //                 $('.location-any').show();
+            //             }
+            //         });
+            //     }
+            // });
 
-            var country_id = $('.country-select').val();
-            $(".location-select option").each(function() {
-                if($(this).hasClass('country-'+country_id)){
-                    $(this).show();
-                    $('.location-any').show();
-                }else{
-                    $(this).hide();
-                    $('.location-any').show();
-                }
-            });
+            // var country_id = $('.country-select').val();
+            // $(".location-select option").each(function() {
+            //     if($(this).hasClass('country-'+country_id)){
+            //         $(this).show();
+            //         $('.location-any').show();
+            //     }else{
+            //         $(this).hide();
+            //         $('.location-any').show();
+            //     }
+            // });
         });
 
         // Google Map

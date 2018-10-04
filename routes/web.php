@@ -269,7 +269,11 @@ Route::group(['middleware' => 'user'], function(){
 Route::get('/update-booksi', 'UpdateController@update');
 
 // Home Routes
-Route::get('/', 'HomeController@index')->name('home');
+Route::get('/{language?}', 'HomeController@index')
+->where([
+    'language' => '^(en|es)?$'
+])
+->name('home');
 Route::get('/user/resend', 'UserController@resend')->name('resend_activation_mail');
 Route::post('/user/changeLanguage', 'UserController@changeLanguage')->name('change_language');
 Route::post('/user/changeCurrency', 'UserController@changeCurrency')->name('change_currency');
@@ -321,7 +325,11 @@ Route::post('/filter/services', 'FilterController@services');
 Route::get('/service/{alias}', 'ServiceController@index');
 
 // Properties
-Route::get('/property/{alias}', 'PropertyController@index')->name('property.show');
+Route::get('/{language}/property/{alias}', 'PropertyController@index')
+->where([
+    'language' => '^(en|es)$'
+])
+->name('property.show');
 Route::post('/bookproperty', 'PropertyController@book');
 
 // Categories

@@ -41,17 +41,20 @@ $(function () {
                     $('.sticky-header').addClass('header-shrink');
                 }
                 if($('.do-sticky').length < 1) {
-                    $('.logo img').attr('src', '/sg_assets/img/logos/black-logo.png');
+                    // $('.logo img').attr('src', '/sg_assets/img/logos/black-logo.png');
+                    $('.logo img').attr('src', '/assets/images/home/logo.png');
                 }
             }
             else {
                 $('.sticky-header').removeClass('header-shrink');
                 if($('.do-sticky').length < 1) {
-                    $('.logo img').attr('src', '/sg_assets/img/logos/logo.png');
+                    // $('.logo img').attr('src', '/sg_assets/img/logos/logo.png');
+                    $('.logo img').attr('src', '/assets/images/home/logo.png');
                 }
             }
         } else {
-            $('.logo img').attr('src', '/sg_assets/img/logos/black-logo.png');
+            // $('.logo img').attr('src', '/sg_assets/img/logos/black-logo.png');
+            $('.logo img').attr('src', '/assets/images/home/logo.png');
         }
     }
 
@@ -115,6 +118,21 @@ $(function () {
         var $animatingElems = $(e.relatedTarget).find("[data-animation ^= 'animated']");
         doAnimations($animatingElems);
     });
+
+    $('#carouselExampleIndicators').on('slid.bs.carousel', function () {
+        // do something…
+        // if($('[data-particles]').length > 0) {
+            // loadParticlesBackground(0);
+            // loadParticlesBackground(1);
+            // loadParticlesBackground(2);
+            // loadParticlesBackground(3);
+            // loadParticlesBackground(4);
+            $('[data-particles]').each(function (index, elem) {
+                loadParticlesBackground(index);
+            }); 
+        // }
+      })
+
     $('#carouselExampleIndicators').carousel({
         interval: 3000,
         pause: "false"
@@ -538,12 +556,15 @@ $(function () {
 
 
     /* ---- particles.js config ---- */
-    if($('#particles-banner').length > 0){
-        loadParticlesBackground();
+    // if($('#particles-banner').length > 0) {
+    if($('[data-particles]').length > 0) {
+        $('[data-particles]').each(function (index, elem) {
+            loadParticlesBackground(index);
+        }); 
     }
 
-    function loadParticlesBackground() {
-        particlesJS("particles-banner", {
+    function loadParticlesBackground(index) {
+        particlesJS("particles-banner-" + index, {
             "particles": {
                 "number": {
                     "value": 100,

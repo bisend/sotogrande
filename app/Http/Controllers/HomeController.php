@@ -14,11 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Admin\Page;
+use App\Models\Admin\Language;
 
 class HomeController extends Controller
 {
 
     protected $static_data, $default_language;
+
+    public $languages;
 
     public function __construct() {
         $this->static_data = static_home();
@@ -30,14 +33,35 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($language = 'en')
     {
         // Get Static Data
         $static_data = $this->static_data;
 
         $default_language = $this->default_language;
 
-        // $title = 'Home | Findaproperty';
+        $languages = Language::all();
+
+        foreach ($languages as $lang) {
+            if ($lang->code == $language) {
+                $languageId = $lang->id;
+            }
+        }
+
+        $title = 'Home | Ayling';
+
+        $slider = Property::with([
+            'property_status',
+            'currency',
+            'images', 
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->where('slider', 1)
+        ->take(5)
+        ->get();
         
         // // Get the properties (Eager Load)
         // $number_of_properties = get_setting('fp_properties_count', 'design');;
@@ -212,7 +236,13 @@ class HomeController extends Controller
         //     'rentMaxPricePerMonthPound',
         //     'pages'
         // ));
-        return view('sotogrande.home');
+        return view('sotogrande.home', compact(
+            'static_data',
+            'title',
+            'languages',
+            'language',
+            'slider'
+        ));
     }
 
     // Contact page

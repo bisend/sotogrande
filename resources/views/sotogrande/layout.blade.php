@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ ! empty($language) ? $language : 'en' }}">
 <head>
-    <title>Sotogrande</title>
+    <title>{{ ! empty($title) ? $title : 'Ayling' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <!-- External CSS libraries -->
@@ -18,7 +18,8 @@
     <link type="text/css" rel="stylesheet" href="/sg_assets/fonts/flaticon/font/flaticon.css">
 
     <!-- Favicon icon -->
-    <link rel="shortcut icon" href="/sg_assets/img/favicon.ico" type="image/x-icon" >
+    {{-- <link rel="shortcut icon" href="/sg_assets/img/favicon.ico" type="image/x-icon" > --}}
+    <link rel="shortcut icon" href="/sg_assets/img/fav.png" type="image/x-icon" >
 
     <!-- Google fonts -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800%7CPoppins:400,500,700,800,900%7CRoboto:100,300,400,400i,500,700">

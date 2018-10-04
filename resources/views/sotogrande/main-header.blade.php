@@ -5,15 +5,23 @@
       <div class="row">
           <div class="col-12">
               <nav class="navbar navbar-expand-lg navbar-light rounded">
-                  <a class="navbar-brand logo navbar-brand d-flex w-50 mr-auto" href="index.html">
-                      <img src="/sg_assets/img/logos/black-logo.png" alt="logo">
+                <a class="navbar-brand logo navbar-brand d-flex w-50 mr-auto" href="{{ route('home', ['language' => $language == 'en' ? '' : $language]) }}">
+                      {{-- <img src="/sg_assets/img/logos/black-logo.png" alt="logo"> --}}
+                      <img src="{{ URL::asset('assets/images/home').'/'.get_setting('site_logo', 'site') }}" alt="logo">
                   </a>
                   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
                       <span class="fa fa-bars"></span>
                   </button>
                   <div class="navbar-collapse collapse w-100" id="navbar">
                       <ul class="navbar-nav ml-auto">
-                          <li class="nav-item dropdown active">
+                          <li class="nav-item">
+                            <a 
+                                href="{{ route('home', ['language' => $language == 'en' ? '' : $language]) }}" 
+                                class="nav-link">
+                                    Home
+                            </a>
+                          </li>
+                          {{-- <li class="nav-item dropdown active">
                               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Index
                               </a>
@@ -201,18 +209,18 @@
                                   <a class="dropdown-item" href="contact-2.html">Contact 2</a>
                                   <a class="dropdown-item" href="contact-3.html">Contact 3</a>
                               </div>
-                          </li>
-                          <li class="nav-item dropdown">
+                          </li> --}}
+                          {{-- <li class="nav-item dropdown">
                               <a href="#full-page-search" class="nav-link">
                                   <i class="fa fa-search"></i>
                               </a>
-                          </li>
-                          <li class="nav-item dropdown">
+                          </li> --}}
+                          {{-- <li class="nav-item dropdown">
                               <a class="open-offcanvas nav-link" href="#">
                                   <span></span>
                                   <span class="fa fa-bars"></span>
                               </a>
-                          </li>
+                          </li> --}}
                       </ul>
                   </div>
               </nav>

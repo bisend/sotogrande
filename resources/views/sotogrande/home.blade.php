@@ -4,10 +4,48 @@
 
 <!-- Banner start -->
 <div class="banner banner-bg" id="particles-banner-wrapper">
-  <div id="particles-banner"></div>
-  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">  
       <div class="carousel-inner">
-          <div class="carousel-item item-bg active">
+          @php($sliderCounter = 0)
+          @foreach ($slider as $slide)
+          <div class="carousel-item item-bg {{ $sliderCounter == 0 ? 'active' : ''}}">
+                <div class="slider-image-bg" style="background-image: url({{ $slide->imageByStatus }})"></div>
+                <div id="particles-banner-{{$sliderCounter}}" data-particles></div>
+                <div class="search-area search-area-3 d-xl-block d-lg-block">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <h2>{{ $slide->contentload->name }}</h2>
+                            {!! str_limit($slide->contentload->description, 200, ' ...') !!}
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6 ">
+                            <div class="form-group">
+                                {{-- <a href="/property/{{$slide->alias}}" class="search-button btn-md btn-color">View details</a> --}}
+                                <a href="{{ route('property.show', ['language' => $language, 'alias' => $slide->alias])}}" 
+                                    class="search-button btn-md btn-color"
+                                >
+                                    View details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{-- <img class="d-block img-fluid" src="{{ $slide->imageByStatus }}" alt="slide"> --}}
+                {{-- <div class="carousel-caption banner-slider-inner d-flex h-100 text-left"> --}}
+                    {{-- <div class="carousel-content container"> --}}
+                        {{-- <div class="text-left max-w">
+                            <h3 data-animation="animated fadeInDown delay-05s">We love make things <br/>amazing and simple</h3>
+                            <p data-animation="animated fadeInUp delay-10s">
+                                This is real estate website template based on Bootstrap 4 framework.
+                            </p>
+                            <a data-animation="animated fadeInUp delay-10s" href="#" class="btn btn-lg btn-round btn-theme">Get Started Now</a>
+                            <a data-animation="animated fadeInUp delay-12s" href="#" class="btn btn-lg btn-round btn-white-lg-outline">Free Download</a>
+                        </div> --}}
+                    {{-- </div> --}}
+                {{-- </div> --}}
+            </div>
+            @php($sliderCounter++)
+          @endforeach
+          {{-- <div class="carousel-item item-bg active">
               <div class="carousel-caption banner-slider-inner d-flex h-100 text-left">
                   <div class="carousel-content container">
                       <div class="text-left max-w">
@@ -50,7 +88,7 @@
                       </div>
                   </div>
               </div>
-          </div>
+          </div> --}}
       </div>
       <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
           <span class="slider-mover-left" aria-hidden="true">
@@ -65,7 +103,7 @@
   </div>
 
   <!-- Search area start -->
-  <div id="search-area-3" class="search-area search-area-3 d-none d-xl-block d-lg-block">
+  {{-- <div id="search-area-3" class="search-area search-area-3 d-none d-xl-block d-lg-block">
       <h2>Find Your Properties</h2>
       <div class="search-area-inner">
           <div class="search-contents">
@@ -159,7 +197,7 @@
               </form>
           </div>
       </div>
-  </div>
+  </div> --}}
   <!-- Search area start -->
 </div>
 <!-- banner end -->

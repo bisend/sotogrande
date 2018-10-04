@@ -29,7 +29,7 @@ class PropertyController extends Controller
         $this->static_data = static_home();
     }
 
-    public function index($alias)
+    public function index($language, $alias)
     {
         $static_data = $this->static_data;
         $default_language = $this->default_language;

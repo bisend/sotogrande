@@ -1099,7 +1099,8 @@ a {
 }
 
 .banner-bg{
-    background: url(http://placehold.it/2200x1200);
+    /* background: url(http://placehold.it/2200x1200); */
+    background-color: transparent;
 }
 
 .banner-bg-color{
@@ -1260,13 +1261,42 @@ a {
 #particles-banner {
     width: 100%;
     height: 100vh;
-    background-color: rgba(36, 42, 53, 0.7);
+    /* background-color: rgba(36, 42, 53, 0.7); */
     position: absolute;
+    z-index: 2;
 }
 
 #particles-banner-wrapper .banner-slider-inner {
     background-color: transparent;
 }
+
+.slider-image-bg {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: absolute;
+    z-index: 1;
+}
+
+#carouselExampleIndicators .carousel-control-prev, 
+#carouselExampleIndicators .carousel-control-next,
+#carouselExampleIndicators .search-area-3 {
+    z-index: 3;
+}
+
+#carouselExampleIndicators .search-area-3 {
+    position: absolute;
+}
+
+[data-particles] {
+    width: 100%;
+    height: 100vh;
+    
+    position: absolute;
+    z-index: 2;
+}
+
 /** SUB BANNER **/
 .sub-banner {
     background: rgba(0, 0, 0, 0.04) url(http://placehold.it/1920x290) top left repeat;

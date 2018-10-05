@@ -123,7 +123,7 @@
 
       <div class="row">
           <div class="col-xl-12">
-              <p class="copy">&copy;  2018 <a href="http://themevessel.com/" target="_blank">Theme Vessel</a>. Trademarks and brands are the property of their respective owners.</p>
+              <p class="copy">&copy;  {{ \Carbon\Carbon::now()->format('Y') }} Ayling | All Rights Reserved | Website by <a href="https://www.innova.gi/" target="_blank" title="Web Design Gibraltar">INNOVA</a></p>
           </div>
       </div>
   </div>

@@ -8,7 +8,7 @@ use App\Models\Admin\Page;
 
 class BlogController extends Controller
 {
-    public function index(){
+    public function index($language = 'en') {
         $title = 'Blog | Findaproperty';
         // Get Blog Contents
         $default_language = default_language();
@@ -20,7 +20,7 @@ class BlogController extends Controller
         return view('realstate.blog.blog-list', compact('posts', 'static_data', 'title', 'pages'));
     }
 
-    public function post($alias){
+    public function post($language = 'en', $alias){
 
         // Get the Post
         $default_language = default_language();

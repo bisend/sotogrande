@@ -23,7 +23,8 @@ class HomeController extends Controller
 
     public $languages;
 
-    public function __construct() {
+    public function __construct() 
+    {
         $this->static_data = static_home();
 
         $this->default_language = default_language();
@@ -41,6 +42,8 @@ class HomeController extends Controller
         $default_language = $this->default_language;
 
         $languages = Language::all();
+
+        $languageId = 1;
 
         foreach ($languages as $lang) {
             if ($lang->code == $language) {
@@ -61,6 +64,60 @@ class HomeController extends Controller
         ->where('status', 1)
         ->where('slider', 1)
         ->take(5)
+        ->get();
+
+        $locations = Location::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->get();
+
+        $categories = Category::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->get();
+
+        $sale_properties = Property::with([
+            'property_status',
+            'currency',
+            'images', 
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->where('sales', 1)
+        ->where('featured_sale', 1)
+        ->orderBy('position_sale', 'asc')
+        ->take(Property::FEATURED_COUNT)
+        ->get();
+
+        $rent_properties = Property::with([
+            'property_status',
+            'currency',
+            'images', 
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->where('rentals', 1)
+        ->where('featured_rent', 1)
+        ->orderBy('position_rent', 'asc')
+        ->take(Property::FEATURED_COUNT)
+        ->get();
+
+        $posts = Blog::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->orderBy('created_at', 'desc')
+        ->limit(3)
         ->get();
         
         // // Get the properties (Eager Load)
@@ -241,7 +298,12 @@ class HomeController extends Controller
             'title',
             'languages',
             'language',
-            'slider'
+            'slider',
+            'locations',
+            'categories',
+            'sale_properties',
+            'rent_properties',
+            'posts'
         ));
     }
 

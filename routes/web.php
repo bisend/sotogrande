@@ -292,7 +292,13 @@ Route::post('/mail/sendcontact', 'EmailController@contact')->name('send_contact'
 Route::get('/blog', 'BlogController@index')->name('blog');
 Route::get('/logout', 'UserController@logout')->name('logout');
 Route::get('/page/{alias}', 'PageController@index')->name('page');
-Route::get('/blog/post/{alias}', 'BlogController@post');
+
+Route::get('/{language}/blog/post/{alias}', 'BlogController@post')
+->where([
+    'language' => '^(en|es)$'
+])
+->name('blog.show');
+
 Route::get('/explore/properties', 'ExploreController@properties')->name('explore_properties');
 Route::get('/explore/services', 'ExploreController@services')->name('explore_services');
 

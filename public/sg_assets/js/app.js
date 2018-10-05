@@ -119,23 +119,19 @@ $(function () {
         doAnimations($animatingElems);
     });
 
-    $('#carouselExampleIndicators').on('slid.bs.carousel', function () {
+    $('#carouselExampleIndicators').on('slid.bs.carousel', function (e) {
         // do something…
-        // if($('[data-particles]').length > 0) {
-            // loadParticlesBackground(0);
-            // loadParticlesBackground(1);
-            // loadParticlesBackground(2);
-            // loadParticlesBackground(3);
-            // loadParticlesBackground(4);
-            $('[data-particles]').each(function (index, elem) {
-                loadParticlesBackground(index);
-            }); 
-        // }
-      })
+        if($('[data-particles]').length > 0) {
+            window["pJSDom"][0].pJS.fn.vendors.destroypJS();
+            window["pJSDom"] = [];
+        }
+
+        loadParticlesBackground(e.to);
+    })
 
     $('#carouselExampleIndicators').carousel({
         interval: 3000,
-        pause: "false"
+        pause: "true"
     });
 
     // Megamenu activation
@@ -558,9 +554,9 @@ $(function () {
     /* ---- particles.js config ---- */
     // if($('#particles-banner').length > 0) {
     if($('[data-particles]').length > 0) {
-        $('[data-particles]').each(function (index, elem) {
-            loadParticlesBackground(index);
-        }); 
+        // $('[data-particles]').each(function (index, elem) {
+            loadParticlesBackground(0);
+        // }); 
     }
 
     function loadParticlesBackground(index) {
@@ -715,3 +711,22 @@ $(function () {
         }
     }).trigger("resize");
 })(jQuery);
+
+$('body').on('click', '[data-bed]', function (e) {
+    $('[data-bed]').each(function (index, elem){
+        $(elem).find('span').removeClass('active-text');
+    });
+    $(this).find('span').addClass('active-text');
+});
+
+$(document).ready(function () {
+    $('.featured-properties .property-thumbnail img').matchHeight({
+        byRow: false,
+        property: 'height',
+    });
+    
+    $('.blog.content-area-2  .blog-theme').matchHeight({
+        byRow: false,
+        property: 'height',
+    });
+});

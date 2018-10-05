@@ -7,14 +7,16 @@ use App\Models\Admin\PropertyContent;
 use App\Models\Admin\Service;
 use App\Models\Admin\ServiceContent;
 use Illuminate\Http\Request;
+use App\Models\Admin\Language;
 
 class SearchController extends Controller
 {
     protected $default_language, $static_data;
-    public function __construct(){
+    public function __construct()
+    {
         $this->default_language = default_language();
-        $this->static_data = static_home();
 
+        $this->static_data = static_home();
     }
 
     public function index(Request $request){
@@ -87,8 +89,15 @@ class SearchController extends Controller
             $featured_services = null;
         }
 
-        return view('home.search', compact('services', 'static_data', 'default_language', 'featured_properties', 'featured_services',
-            'services', 'properties'));
+        return view('home.search', compact(
+            'services', 
+            'static_data', 
+            'default_language', 
+            'featured_properties', 
+            'featured_services',
+            'services', 
+            'properties'
+        ));
     }
 
     public function searchSale(Request $request)
@@ -111,5 +120,42 @@ class SearchController extends Controller
         $search_properties = $properties->paginate(3);
 
         return view('realstate.sale', compact('static_data', 'search_properties'));
+    }
+
+    public function search($language = 'en')
+    {
+        $page = 'search';
+        // Get Static Data
+        $static_data = $this->static_data;
+
+        $default_language = $this->default_language;
+
+        $languages = Language::all();
+
+        $languageId = 1;
+
+        foreach ($languages as $lang) {
+            if ($lang->code == $language) {
+                $languageId = $lang->id;
+            }
+        }
+
+        $title = 'Search | Ayling';
+         
+        return view('sotogrande.search', compact(
+            'static_data',
+            'title',
+            'languages',
+            'language',
+            'page'
+            // 'slider',
+            // 'locations',
+            // 'categories',
+            // 'sale_properties',
+            // 'rent_properties',
+            // 'posts',
+            // 'minPrice',
+            // 'maxPrice'
+        ));
     }
 }

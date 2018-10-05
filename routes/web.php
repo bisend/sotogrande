@@ -336,6 +336,12 @@ Route::get('/{language}/property/{alias}', 'PropertyController@index')
     'language' => '^(en|es)$'
 ])
 ->name('property.show');
+
+Route::get('/{language}/search', 'SearchController@search')
+->where([
+    'language' => '^(en|es)$'
+]);
+
 Route::post('/bookproperty', 'PropertyController@book');
 
 // Categories

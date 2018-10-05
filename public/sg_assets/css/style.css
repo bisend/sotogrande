@@ -1446,6 +1446,12 @@ a {
 .top-lables .rght {
     right: 0;
 }
+
+.range-slider .ui-slider .ui-slider-handle, 
+.range-slider .ui-slider-horizontal {
+    cursor: pointer;
+}
+
 /** SUB BANNER **/
 .sub-banner {
     background: rgba(0, 0, 0, 0.04) url(http://placehold.it/1920x290) top left repeat;

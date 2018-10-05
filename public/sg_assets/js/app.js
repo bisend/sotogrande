@@ -237,8 +237,8 @@ $(function () {
 
     // Range sliders activation
     $(".range-slider-ui").each(function () {
-        var minRangeValue = $(this).attr('data-min');
-        var maxRangeValue = $(this).attr('data-max');
+        var minRangeValue = parseInt($(this).attr('data-min'));
+        var maxRangeValue = parseInt($(this).attr('data-max'));
         var minName = $(this).attr('data-min-name');
         var maxName = $(this).attr('data-max-name');
         var unit = $(this).attr('data-unit');
@@ -256,8 +256,8 @@ $(function () {
             values: [minRangeValue, maxRangeValue],
             slide: function (event, ui) {
                 event = event;
-                var currentMin = parseInt(ui.values[0], 10);
-                var currentMax = parseInt(ui.values[1], 10);
+                var currentMin = parseInt(ui.values[0]);
+                var currentMax = parseInt(ui.values[1]);
                 $(this).children(".min-value").text( currentMin + " " + unit);
                 $(this).children(".max-value").text(currentMax + " " + unit);
                 $(this).children(".current-min").val(currentMin);
@@ -265,8 +265,8 @@ $(function () {
             }
         });
 
-        var currentMin = parseInt($(this).slider("values", 0), 10);
-        var currentMax = parseInt($(this).slider("values", 1), 10);
+        var currentMin = parseInt($(this).slider("values", 0));
+        var currentMax = parseInt($(this).slider("values", 1));
         $(this).children(".min-value").text( currentMin + " " + unit);
         $(this).children(".max-value").text(currentMax + " " + unit);
         $(this).children(".current-min").val(currentMin);

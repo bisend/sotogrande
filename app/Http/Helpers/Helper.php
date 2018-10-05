@@ -316,5 +316,41 @@ use Intervention\Image\Facades\Image as ImageIn;
 
     }
 
+    if( ! function_exists('allPrices')) {
+        function allPrices($data = []) {
+            if ( ! $data) {
+                return [];
+            }
+
+            $p = $data->map(function ($item, $key) {
+                $a = [];
+                foreach ($item->prices as $k => $price) {
+                    if (($k == 'price' || $k == 'week' || $k == 'month') && ! empty($price)) {
+                        $a[] = $price;
+                    }
+                }
+                return $a;
+            });
+    
+            $data = collect($p);
+    
+            return $data->collapse();
+        }
+    }
+
+    if( ! function_exists('currentUrl')) {
+        function currentUrl($language = 'en', $page = '') {
+            if ( ! $page) {
+                return '/';
+            }
+
+            if ($page == 'home') {
+                return url()->current();
+            } else {
+                return '/';
+            }
+        }
+    }
+
 
 

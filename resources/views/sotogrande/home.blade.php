@@ -353,7 +353,15 @@
                       <div class="col-6 col-lg-3 col-md-3">
                         <div class="form-group">
                             <div class="range-slider">
-                                <div data-min="0" data-max="150000" data-unit="€" data-min-name="min_price" data-max-name="max_price" class="range-slider-ui ui-slider" aria-disabled="false"></div>
+                                <div 
+                                    data-min="{{ $minPrice }}" 
+                                    data-max="{{ $maxPrice }}" 
+                                    data-unit="€" 
+                                    data-min-name="min_price" 
+                                    data-max-name="max_price" 
+                                    class="range-slider-ui ui-slider" 
+                                    aria-disabled="false"
+                                ></div>
                                 <div class="clearfix"></div>
                             </div>
                         </div>

@@ -36,6 +36,7 @@ class HomeController extends Controller
      */
     public function index($language = 'en')
     {
+        $page = 'home';
         // Get Static Data
         $static_data = $this->static_data;
 
@@ -120,6 +121,18 @@ class HomeController extends Controller
         ->limit(3)
         ->get();
         
+        $minPrice = 0;
+        $maxPrice = 0;
+        $prices = Property::select("prices")
+        ->where('status', 1)
+        ->get();
+        
+        $prices = allPrices($prices);
+        
+        $minPrice = $prices->min();
+        $maxPrice = $prices->max();
+        // dd($prices);
+
         // // Get the properties (Eager Load)
         // $number_of_properties = get_setting('fp_properties_count', 'design');;
         // if($static_data['design_settings']['fp_show_featured_only']){
@@ -303,7 +316,10 @@ class HomeController extends Controller
             'categories',
             'sale_properties',
             'rent_properties',
-            'posts'
+            'posts',
+            'minPrice',
+            'maxPrice',
+            'page'
         ));
     }
 

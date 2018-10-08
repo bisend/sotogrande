@@ -17,19 +17,22 @@ use App\Models\Admin\Location;
 use App\Models\Admin\Country;
 use App\Models\Admin\Category;
 use App\Models\Admin\Page;
+use App\Http\Helpers\Languages;
 
 class PropertyController extends Controller
 {
     protected $default_language;
+
     protected $static_data;
 
     public function __construct()
     {
         $this->default_language = default_language();
+        
         $this->static_data = static_home();
     }
 
-    public function index($language, $alias)
+    public function index($alias, $language = Languages::DEFAULT_LANGUAGE)
     {
         $static_data = $this->static_data;
         $default_language = $this->default_language;

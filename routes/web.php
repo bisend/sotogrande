@@ -274,6 +274,8 @@ Route::get('/{language?}', 'HomeController@index')
     'language' => '^(en|es)?$'
 ])
 ->name('home');
+
+
 Route::get('/user/resend', 'UserController@resend')->name('resend_activation_mail');
 Route::post('/user/changeLanguage', 'UserController@changeLanguage')->name('change_language');
 Route::post('/user/changeCurrency', 'UserController@changeCurrency')->name('change_currency');
@@ -293,9 +295,9 @@ Route::get('/blog', 'BlogController@index')->name('blog');
 Route::get('/logout', 'UserController@logout')->name('logout');
 Route::get('/page/{alias}', 'PageController@index')->name('page');
 
-Route::get('/{language}/blog/post/{alias}', 'BlogController@post')
+Route::get('/blog/post/{alias}/{language?}', 'BlogController@post')
 ->where([
-    'language' => '^(en|es)$'
+    'language' => '^(en|es)?$'
 ])
 ->name('blog.show');
 
@@ -331,15 +333,15 @@ Route::post('/filter/services', 'FilterController@services');
 Route::get('/service/{alias}', 'ServiceController@index');
 
 // Properties
-Route::get('/{language}/property/{alias}', 'PropertyController@index')
+Route::get('/property/{alias}/{language?}', 'PropertyController@index')
 ->where([
-    'language' => '^(en|es)$'
+    'language' => '^(en|es)?$'
 ])
 ->name('property.show');
 
-Route::get('/{language}/search', 'SearchController@search')
+Route::get('/search/{language?}', 'SearchController@search')
 ->where([
-    'language' => '^(en|es)$'
+    'language' => '^(en|es)?$'
 ]);
 
 Route::post('/bookproperty', 'PropertyController@book');

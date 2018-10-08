@@ -8,6 +8,9 @@ use App\Models\Admin\Service;
 use App\Models\Admin\ServiceContent;
 use Illuminate\Http\Request;
 use App\Models\Admin\Language;
+use App\Http\Helpers\Languages;
+use App\Models\Admin\Location;
+use App\Models\Admin\Category;
 
 class SearchController extends Controller
 {
@@ -122,8 +125,10 @@ class SearchController extends Controller
         return view('realstate.sale', compact('static_data', 'search_properties'));
     }
 
-    public function search($language = 'en')
+    public function search($language = Languages::DEFAULT_LANGUAGE)
     {
+        Languages::localizeApp($language);
+
         $page = 'search';
         // Get Static Data
         $static_data = $this->static_data;
@@ -141,21 +146,210 @@ class SearchController extends Controller
         }
 
         $title = 'Search | Ayling';
+
+        $locations = Location::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->get();
+
+        $categories = Category::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->get();
+
+        $recent_properties = Property::orderBy('created_at', 'desc')
+        ->where('status', 1)
+        ->take(Property::RECENT_PROPERTIES)
+        ->get();
+
+        $minPrice = 0;
+        $maxPrice = 0;
+        $prices = Property::select("prices")
+        ->where('status', 1)
+        ->get();
+        
+        $prices = allPrices($prices);
+        
+        $minPrice = $prices->min();
+        $maxPrice = $prices->max();
+
+        $properties = [];
+        
+        $filter = [
+            'status' => false,
+            'type' => false,
+            'location' => false,
+            'bed' => false,
+            'minSearchPrice' => false,
+            'maxSearchPrice' => false,
+        ];
+
+        $reference = request('reference');
+
+        $status = request('status');
+
+        $type = request('type');
+
+        $location = request('location');
+
+        $bed = request('bed');
+
+        $minSearchPrice = request('min-price');
+
+        $maxSearchPrice = request('max-price');
+
+        if ( ! empty($reference)) {
+            
+            $properties = Property::with([
+                'property_status',
+                'currency',
+                'images', 
+                'prop_location.contentload' => function($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+                'contentload' => function($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+            ])
+            ->where('property_info->property_reference', 'like', "%$reference%")
+            ->where('status', 1)
+            ->paginate(10);
+        } else {
+            
+            if ($status != 'all') {
+                $filter['status'] = true;
+            }
+
+            if ($type != 'all') {
+                $filter['type'] = true;
+            }
+            
+            if ($location != 'all') {
+                $filter['location'] = true;
+            }
+            
+            if ($bed != 'all') {
+                $filter['bed'] = true;
+            }
+            
+            if ($minSearchPrice) {
+                $filter['minSearchPrice'] = true;
+            }
+            
+            if ($maxSearchPrice) {
+                $filter['maxSearchPrice'] = true;
+            }
+            
+            $properties = Property::with([
+                'category.contentload' => function($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+                'prop_location.contentload' => function($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+                // 'contentload' => function($query) use ($languageId) {
+                //     $query->where('language_id', $languageId);
+                // },
+            ])
+            ->where('status', 1)
+            ->get();
+
+            $filtered = $properties->filter(function ($item, $key) use (
+                    $filter, 
+                    $status, 
+                    $type, 
+                    $location, 
+                    $bed, 
+                    $minSearchPrice, 
+                    $maxSearchPrice
+                ) {
+                
+                $isReturnItem = true;
+                
+                if ($filter['minSearchPrice'] && $filter['maxSearchPrice']) {
+                    if (
+                        (
+                            ( ! empty($item->prices['price']) && $item->prices['price'] >= $minSearchPrice) || 
+                            ( ! empty($item->prices['week']) && $item->prices['week'] >= $minSearchPrice) || 
+                            ( ! empty($item->prices['month']) && $item->prices['month'] >= $minSearchPrice)
+                        ) &&
+                        (
+                            ( ! empty($item->prices['price']) && $item->prices['price'] <= $maxSearchPrice) || 
+                            ( ! empty($item->prices['week']) && $item->prices['week'] <= $maxSearchPrice) || 
+                            ( ! empty($item->prices['month']) && $item->prices['month'] <= $maxSearchPrice)
+                        )
+                    ) {
+                        $isReturnItem = true;
+                    } else {
+                        $isReturnItem = false;
+                    }
+                }
+
+                if ($filter['status'] && $isReturnItem) {
+                    if ($status == 'sale') {
+                        $isReturnItem = $item->sales == 1 ? true : false;
+                    }
+                    if ($status == 'rent') {
+                        $isReturnItem = $item->rentals == 1 ? true : false;
+                    }
+                }
+
+                if ($filter['type'] && $isReturnItem) {
+                    $isReturnItem = $item->category->contentload->name == $type ? true : false;
+                }
+                
+                if ($filter['location'] && $isReturnItem) {
+                    $isReturnItem = $item->prop_location->contentload->location == $location ? true : false;
+                }
+                
+                if ($filter['bed'] && $isReturnItem) {
+                    $isReturnItem = ( ! empty($item->property_info['bedrooms']) && (int) $item->property_info['bedrooms'] >= (int) $bed) ? true : false;
+                }
+                
+                return $isReturnItem;
+            });
+
+            $ids = $filtered->map(function ($item, $key) {
+                return $item->id;
+            });
+
+            $properties = Property::with([
+                'property_status',
+                'currency',
+                'images', 
+                'prop_location.contentload' => function($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+                'contentload' => function($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+            ])
+            ->whereIn('id', $ids)
+            ->where('status', 1)
+            ->paginate(10);
+        }
+
+        $properties->appends(request()->all());
+
+        $propertiesCount = $properties->total();
          
         return view('sotogrande.search', compact(
             'static_data',
             'title',
             'languages',
             'language',
-            'page'
-            // 'slider',
-            // 'locations',
-            // 'categories',
-            // 'sale_properties',
-            // 'rent_properties',
-            // 'posts',
-            // 'minPrice',
-            // 'maxPrice'
+            'page',
+            'locations',
+            'categories',
+            'recent_properties',
+            'minPrice',
+            'maxPrice',
+            'properties',
+            'propertiesCount'
         ));
     }
 }

@@ -44,6 +44,7 @@
 
 <!-- External JS libraries -->
 <script src="/sg_assets/js/jquery-2.2.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
 <script src="/sg_assets/js/popper.min.js"></script>
 <script src="/sg_assets/js/bootstrap.min.js"></script>
 <script src="/sg_assets/js/jquery.selectBox.js"></script>

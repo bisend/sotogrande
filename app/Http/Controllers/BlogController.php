@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Admin\Blog;
 use Illuminate\Http\Request;
 use App\Models\Admin\Page;
+use App\Http\Helpers\Languages;
 
 class BlogController extends Controller
 {
-    public function index($language = 'en') {
+    public function index($language = Languages::DEFAULT_LANGUAGE) {
         $title = 'Blog | Findaproperty';
         // Get Blog Contents
         $default_language = default_language();
@@ -20,7 +21,8 @@ class BlogController extends Controller
         return view('realstate.blog.blog-list', compact('posts', 'static_data', 'title', 'pages'));
     }
 
-    public function post($language = 'en', $alias){
+    public function post($alias, $language = Languages::DEFAULT_LANGUAGE)
+    {
 
         // Get the Post
         $default_language = default_language();

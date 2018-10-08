@@ -337,20 +337,3 @@ use Intervention\Image\Facades\Image as ImageIn;
             return $data->collapse();
         }
     }
-
-    if( ! function_exists('currentUrl')) {
-        function currentUrl($language = 'en', $page = '') {
-            if ( ! $page) {
-                return '/';
-            }
-
-            if ($page == 'home') {
-                return url()->current();
-            } else {
-                return '/';
-            }
-        }
-    }
-
-
-

@@ -1447,6 +1447,10 @@ a {
     right: 0;
 }
 
+.search-property-box .top-lables .lft {
+    left: 15px;
+}
+
 .range-slider .ui-slider .ui-slider-handle, 
 .range-slider .ui-slider-horizontal {
     cursor: pointer;

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Admin\Page;
 use App\Models\Admin\Language;
+use App\Http\Helpers\Languages;
 
 class HomeController extends Controller
 {
@@ -36,6 +37,8 @@ class HomeController extends Controller
      */
     public function index($language = 'en')
     {
+        Languages::localizeApp($language);
+
         $page = 'home';
         // Get Static Data
         $static_data = $this->static_data;
@@ -131,7 +134,7 @@ class HomeController extends Controller
         
         $minPrice = $prices->min();
         $maxPrice = $prices->max();
-        // dd($prices);
+        
 
         // // Get the properties (Eager Load)
         // $number_of_properties = get_setting('fp_properties_count', 'design');;

@@ -243,6 +243,26 @@ $(function () {
         var maxName = $(this).attr('data-max-name');
         var unit = $(this).attr('data-unit');
 
+        // CHECK IF HAS PRICE IN REQUEST START
+        var urlQuery = window.location.href.split('&');
+        var hasMinPrice =  _.filter(urlQuery, function(s) { 
+            return s.indexOf( 'min-price' ) !== -1; 
+        });
+        var hasMaxPrice =  _.filter(urlQuery, function(s) { 
+            return s.indexOf( 'max-price' ) !== -1; 
+        });
+        var currentMinPrice = 0;
+        var currentMaxPrice = 0;
+        if (hasMinPrice.length) {
+            var b = hasMinPrice[0].split('=');
+            currentMinPrice = b.length >= 2 ? parseInt(b[1]) : 0;
+        }
+        if (hasMaxPrice.length) {
+            var b = hasMaxPrice[0].split('=');
+            currentMaxPrice = b.length >= 2 ? parseInt(b[1]) : 0;
+        }
+        // CHECK IF HAS PRICE IN REQUEST END
+
         $(this).append("" +
             "<span class='min-value'></span> " +
             "<span class='max-value'></span>" +
@@ -253,7 +273,7 @@ $(function () {
             range: true,
             min: minRangeValue,
             max: maxRangeValue,
-            values: [minRangeValue, maxRangeValue],
+            values: [hasMinPrice.length ? currentMinPrice : minRangeValue, hasMaxPrice.length ? currentMaxPrice : maxRangeValue],
             slide: function (event, ui) {
                 event = event;
                 var currentMin = parseInt(ui.values[0]);
@@ -729,4 +749,66 @@ $(document).ready(function () {
         byRow: false,
         property: 'height',
     });
+
+    // CHECK IF HAS BEDS IN REQUEST START
+    var urlQuery = window.location.href.split('&');
+    var hasBed =  _.filter(urlQuery, function(s) { 
+        return s.indexOf( 'bed' ) !== -1; 
+    });
+    var value = 'all';
+    if (hasBed.length) {
+        var b = hasBed[0].split('=');
+        value = b.length >= 2 ? b[1] : 'all';
+    }
+    if (value != 'all') {
+        $('[data-bed]').each(function (index, elem) {
+            $(elem).find('span').removeClass('active-text');
+            if (index + 1 == value) {
+                $(elem).siblings('input').prop( "checked", true );
+                $(elem).find('span').addClass('active-text');
+            }
+        });
+    }
+    // CHECK IF HAS BEDS IN REQUEST END
+});
+
+$('body').on('click', '[data-search-submit]', function (event) {
+    event.preventDefault();
+    var langValue = $('html').attr('lang');
+    var language = (langValue == 'en') ? '' : '/' + langValue;
+    var $status = $('[data-search-property-status]');
+    var $type = $('[data-search-property-type]');
+    var $location = $('[data-search-property-location]');
+    var $bed = $('[data-bed]').find('span.active-text');
+    var $minPrice = $('[data-search-property-price]').find('.min-value');
+    var $maxPrice = $('[data-search-property-price]').find('.max-value');
+    var $reference = $('[data-search-property-reference]');
+
+    var status = $status.val();
+    var type = $type.val();
+    var location = $location.val();
+    var bed = ($bed.text().replace(/\D/g, "") == '') ? 'all' : $bed.text().replace(/\D/g, "");
+    var minPrice = $minPrice.text().replace(/\D/g, "");
+    var maxPrice = $maxPrice.text().replace(/\D/g, "");
+    var reference = $reference.val();
+    
+    var url = '/search' + language;
+    var query = '?search=true&';
+
+    if (reference.length > 0) {
+        query += 'reference=' + reference;
+    } else {
+        query += 'status=' + status + '&';
+        query += 'type=' + type + '&';
+        query += 'location=' + location + '&';
+        query += 'bed=' + bed + '&';
+        query += 'min-price=' + minPrice + '&';
+        query += 'max-price=' + maxPrice;
+    }
+
+    url += query;
+
+    console.log(url);
+
+    window.location.href = url;
 });

@@ -68,11 +68,13 @@
                     <li>
                         @foreach ($languages as $lang)
                             @if ($language == 'en')
-                                <a href="{{ url()->current() }}{{ $lang->code == 'en' ? '' : '/' . $lang->code}}">
+                                {{-- <a href="{{ url()->current() }}{{ $lang->code == 'en' ? '' : '/' . $lang->code}}"> --}}
+                                <a href="{{ url_current($lang->code) }}">
                                     <img src="{{$lang->flag}}" alt="{{$lang->code}}">{{ $lang->code }}
                                 </a>
                             @elseif($language == 'es')
-                                <a href="{{ str_replace('/es', '', url()->current()) }}{{ $lang->code == 'en' ? '' : '/' . $lang->code}}">
+                                {{-- <a href="{{ str_replace('/es', '', url()->current()) }}{{ $lang->code == 'en' ? '' : '/' . $lang->code}}"> --}}
+                                <a href="{{ url_current($lang->code) }}">
                                     <img src="{{$lang->flag}}" alt="{{$lang->code}}">{{ $lang->code }}
                                 </a>
                             @endif

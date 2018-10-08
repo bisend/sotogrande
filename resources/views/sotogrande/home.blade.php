@@ -58,7 +58,7 @@
                         <div class="row mt-4 mb-2">
                             <div class="col-md-6 col-sm-6 col-xs-6">
                                 <div class="form-group">
-                                    <a href="{{ route('property.show', ['language' => $language, 'alias' => $slide->alias]) }}" 
+                                    <a href="{{ url_property($slide->alias, $language) }}" 
                                         class="search-button btn-md btn-color"
                                     >
                                         View details
@@ -259,7 +259,7 @@
   <div class="container">
       <div class="search-area-inner">
           <div class="search-contents ">
-              <form action="index.html" method="GET">
+              <form action="/search/" method="GET">
                   <div class="row">
                       {{-- <div class="col-6 col-lg-3 col-md-3">
                           <div class="form-group">
@@ -277,7 +277,11 @@
                       <div class="col-6 col-lg-3 col-md-3">
                           <div class="form-group">
                               <label>Property Status</label>
-                              <select class="selectpicker search-fields" name="property-status">
+                              <select 
+                                class="selectpicker search-fields" 
+                                name="property-status"
+                                data-search-property-status
+                              >
                                   <option value="all">All</option>
                                   <option value="sale">For Sale</option>
                                   <option value="rent">For Rent</option>
@@ -287,18 +291,26 @@
                       <div class="col-6 col-lg-3 col-md-3">
                         <div class="form-group">
                             <label>Property Type</label>
-                            <select class="selectpicker search-fields" name="category">
+                            <select 
+                                class="selectpicker search-fields" 
+                                name="category"
+                                data-search-property-type
+                            >
                                 <option value="all">All</option>
                                 @foreach ($categories as $category)
                                     <option>{{ $category->contentload->name }}</option>
                                 @endforeach
-                              </select>
+                            </select>
                         </div>
                       </div>
                       <div class="col-6 col-lg-3 col-md-3">
                           <div class="form-group">
                               <label>Location</label>
-                              <select class="selectpicker search-fields" name="location">
+                              <select 
+                                class="selectpicker search-fields" 
+                                name="location"
+                                data-search-property-location
+                              >
                                     <option value="all">All</option>
                                     @foreach ($locations as $location)
                                         <option>{{ $location->contentload->location }}</option>
@@ -312,9 +324,16 @@
                             <div class="beds-radio">
                                 @for ($i = 1; $i <= 5; $i++)
                                     <div class="bed-input-block">
-                                        <input value="{{$i}}" type="radio" id="{{$i}}-plus-bed" name="radio-bed">
-                                        <label for="{{$i}}-plus-bed" data-bed="{{$i}}">
-                                            <span class="bed-text">{{$i}}+</span>
+                                        <input 
+                                            value="{{ $i }}" 
+                                            type="radio" 
+                                            id="{{ $i }}-plus-bed" 
+                                            name="radio-bed"
+                                            data-search-property-bed="{{ $i }}"
+                                            data-search-property-bed-selected="false"
+                                        >
+                                        <label for="{{$i}}-plus-bed" data-bed="{{ $i }}">
+                                            <span class="bed-text">{{ $i }}+</span>
                                         </label>
                                     </div>
                                 @endfor
@@ -351,7 +370,7 @@
                           </div>
                       </div> --}}
                       <div class="col-6 col-lg-3 col-md-3">
-                        <div class="form-group">
+                        <div class="form-group" data-search-property-price>
                             <div class="range-slider">
                                 <div 
                                     data-min="{{ $minPrice }}" 
@@ -372,12 +391,19 @@
                                 placeholder="Search by reference" 
                                 type="search" 
                                 name="reference"
+                                data-search-property-reference
                             >
                         </div>
                       </div>
                       <div class="col-6 col-lg-3 col-md-3">
                           <div class="form-group">
-                              <button class="search-button btn-md btn-color" type="submit">Search</button>
+                              <button 
+                                class="search-button btn-md btn-color" 
+                                type="submit"
+                                data-search-submit
+                              >
+                                Search
+                              </button>
                           </div>
                       </div>
                   </div>
@@ -423,12 +449,12 @@
                             <div class="card property-box-2">
                                 <!-- property img -->
                                 <div class="property-thumbnail">
-                                    <a href="{{ route('property.show', ['language' => $language, 'alias' => $sale_property->alias]) }}" class="property-img">
+                                    <a href="{{ url_property($sale_property->alias, $language) }}" class="property-img">
                                         <img src="{{ $sale_property->imageByStatus }}" alt="property-3" class="img-fluid">
                                     </a>
                                     <div class="property-overlay">
                                         <a 
-                                            href="{{ route('property.show', ['language' => $language, 'alias' => $sale_property->alias]) }}" 
+                                            href="{{ url_property($sale_property->alias, $language) }}" 
                                             class="overlay-link"
                                         >
                                             <i class="fa fa-link"></i>
@@ -451,7 +477,7 @@
                                 <!-- detail -->
                                 <div class="detail">
                                     <h5 class="title">
-                                        <a href="{{ route('property.show', ['language' => $language, 'alias' => $sale_property->alias]) }}">
+                                        <a href="{{ url_property($sale_property->alias, $language) }}">
                                             {{ $sale_property->contentload->name }}
                                         </a>
                                     </h5>
@@ -532,12 +558,12 @@
                             <div class="card property-box-2">
                                 <!-- property img -->
                                 <div class="property-thumbnail">
-                                    <a href="{{ route('property.show', ['language' => $language, 'alias' => $rent_property->alias]) }}" class="property-img">
+                                    <a href="{{ url_property($rent_property->alias, $language) }}" class="property-img">
                                         <img src="{{ $rent_property->imageByStatus }}" alt="property-3" class="img-fluid">
                                     </a>
                                     <div class="property-overlay">
                                         <a 
-                                            href="{{ route('property.show', ['language' => $language, 'alias' => $rent_property->alias]) }}" 
+                                            href="{{ url_property($rent_property->alias, $language) }}" 
                                             class="overlay-link"
                                         >
                                             <i class="fa fa-link"></i>
@@ -560,7 +586,7 @@
                                 <!-- detail -->
                                 <div class="detail">
                                     <h5 class="title">
-                                        <a href="{{ route('property.show', ['language' => $language, 'alias' => $rent_property->alias]) }}">
+                                        <a href="{{ url_property($rent_property->alias, $language) }}">
                                             {{ $rent_property->contentload->name }}
                                         </a>
                                     </h5>
@@ -835,7 +861,9 @@
                                 <h5>{{ \Carbon\Carbon::parse($last_post['created_at'])->format('M') }}</h5>
                             </div>
                             <h3>
-                                <a href="{{ route('blog.show', ['language' => $language, 'alias' => $last_post->alias]) }}">{{ $last_post->contentload->title }}</a>
+                                <a href="{{ url_blog_page($last_post->alias, $language) }}">
+                                    {{ $last_post->contentload->title }}
+                                </a>
                             </h3>
                             {{-- <div class="post-meta"> --}}
                                 {{-- <span><a href="#"><i class="fa fa-user"></i>John Antony</a></span> --}}
@@ -844,7 +872,7 @@
                             <p>
                                 {!! str_limit($last_post->contentload->content, 100, ' ...') !!}
                             </p>
-                            <a href="{{ route('blog.show', ['language' => $language, 'alias' => $last_post->alias]) }}" class="btn-read-more">Read more</a>
+                            <a href="{{ url_blog_page($last_post->alias, $language) }}" class="btn-read-more">Read more</a>
                         </div>
                     </div>
                 </div>

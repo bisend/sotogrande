@@ -17,6 +17,7 @@ use App\Models\Admin\Location;
 use App\Models\Admin\Country;
 use App\Models\Admin\Category;
 use App\Models\Admin\Page;
+use App\Models\Admin\Language;
 use App\Http\Helpers\Languages;
 
 class PropertyController extends Controller
@@ -34,236 +35,364 @@ class PropertyController extends Controller
 
     public function index($alias, $language = Languages::DEFAULT_LANGUAGE)
     {
+        Languages::localizeApp($language);
+
+        $page = 'property';
+        // Get Static Data
         $static_data = $this->static_data;
+
         $default_language = $this->default_language;
-        $countries = Country::all();
-        $locations = Location::all();
-        $categories = Category::get();
+
+        $languages = Language::all();
+
+        $languageId = 1;
+
+        foreach ($languages as $lang) {
+            if ($lang->code == $language) {
+                $languageId = $lang->id;
+            }
+        }
+
+        $title = 'Property';
+
+        $locations = Location::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->get();
+
+        $categories = Category::with([
+            'contentload' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->get();
+
+        $minPrice = 0;
+        $maxPrice = 0;
+        $prices = Property::select("prices")
+        ->where('status', 1)
+        ->get();
+        
+        $prices = allPrices($prices);
+        
+        $minPrice = $prices->min();
+        $maxPrice = $prices->max();
+
         $property = Property::with([
             'property_status',
             'currency',
             'images', 
-            'contentload' => function ($query) use ($default_language) {
-                $query->where('language_id', 2);
-        }])
+            'pdfFile' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+            'prop_location.contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+            'contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
         ->where('status', 1)
         ->where('alias', $alias)
         ->first();
 
-        if ( ! $property) {
-            $property = Property::with([
-                'property_status',
-                'currency',
-                'images', 
-                'contentload' => function ($query) use ($default_language) {
-                    $query->where('language_id', 2);
-            }])
-            ->where('status', 1)
-            ->get()
-            ->filter(function($value) use($alias) {
-                return $value->property_info['property_reference'] == $alias;
-            })
-            ->first();
-        }
-        
-        $features = Feature::all();
-
-        if ($property) {
-            // $title = $property->contentDefault->name;
-            $title = $property->contentload->name;
-            // Get booked dates for calendar
-            $dates = PropertyDate::where('property_id', $property->id)->pluck('dates')->toArray();
-
-            if ($dates || !count($dates)) {
-                $dates = [];
-            }
-
-            $bookings = Booking::where('property_id', $property->id)->get();
-
-            foreach ($bookings as $booking) {
-                $date = generateDateRangeB(Carbon::createFromFormat('Y-m-d', $booking->start_date), Carbon::createFromFormat('Y-m-d', $booking->end_date));
-
-                if ($date) {
-                    $dates[] = $date;
-                }
-            }
-
-            if (isset($dates[0])) {
-                $dates = array_reduce($dates, 'array_merge', []);
-            }
-
-            $reviews = Review::where('property_id', $property->id)->where('status', 1)->take(3)->get();
-
-            $similar = Property::with([
-                'property_status',
-                'currency',
-                'images', 'contentload' => function ($query) use ($default_language) {
-                $query->where('language_id', $default_language->id);
-            }])->where('id', '!=', $property->id)->where(function ($query) use ($property) {
-                $query->where('category_id', $property->category->id);
-            })->inRandomOrder()->take(3)->get();
-
-            $mainProperty = $property;
-
-            $recent_properties = Property::with([
-                    'property_status',
-                    'currency'
-                ])
-                ->orderBy('created_at', 'desc')
-                ->where('status', 1)
-                ->take(Property::RECENT_PROPERTIES)
-                ->get();
-
-            $last_posts = Blog::with(['contentload' => function($query) use($default_language){
-                $query->where('language_id', $default_language->id);
-            }])->where('status', 1)
-            ->orderBy('created_at', 'desc')
-            ->take(3)
-            ->get();
-            
-            $properties = Property::with([
-                    'property_status',
-                    'currency'
-                ])
-                ->where('status', 1)
-                ->where('id', '!=', $mainProperty->id)
-                ->get();
-
-            $related_properties = $properties->each(function ($value) use($mainProperty) {
-                return (int) $value->prices['service_charge'] < ((int)$mainProperty->prices['service_charge'] + Property::PRICE_RANGE) && 
-                (int)$value->prices['service_charge'] < ((int)$mainProperty->prices['service_charge'] + Property::PRICE_RANGE);
-            })->take(Property::RELATED_PROPERTIES_COUNT);
-
-            $salePrices = Property::select("prices")
-            ->where('sales', '=', 1)
-            ->where('currency_id', 1)
-            ->where('status', 1)
-            ->get();
-        
-            $salePricesPound = Property::select("prices")
-                ->where('sales', '=', 1)
-                ->where('currency_id', 2)
-                ->where('status', 1)
-                ->get();
-
-            $p = [];
-            $pPound = [];
-            $saleMinPrice = 0;
-            $saleMaxPrice = 0;
-            $saleMinPricePound = 0;
-            $saleMaxPricePound = 0;
-
-            foreach ($salePrices as $price) {
-                $p[] = $price['prices']['price'];
-            }
-
-            if ( ! empty($p) > 0) {
-                $saleMinPrice = min($p);
-                $saleMaxPrice = max($p);
-            }
-
-            foreach ($salePricesPound as $price) {
-                $pPound[] = $price['prices']['price'];
-            }
-
-            if ( ! empty($pPound) > 0) {
-                $saleMinPricePound = min($pPound);
-                $saleMaxPricePound = max($pPound);
-            }
-
-            $rentPrices = Property::select("prices")
-                            ->where('rentals', '=', 1)
-                            ->where('currency_id', 1)
-                            ->where('status', 1)
-                            ->get();
-            
-            $rentPricesPound = Property::select("prices")
-                ->where('rentals', '=', 1)
-                ->where('currency_id', 2)
-                ->where('status', 1)
-                ->get();
-
-            $perWeek = [];
-            $perMonth = [];
-            $rentMinPricePerWeek = 0;
-            $rentMaxPricePerWeek = 0;
-            $rentMinPricePerMonth = 0;
-            $rentMaxPricePerMonth = 0;
-
-            $perWeekPound = [];
-            $perMonthPound = [];
-            $rentMinPricePerWeekPound = 0;
-            $rentMaxPricePerWeekPound = 0;
-            $rentMinPricePerMonthPound = 0;
-            $rentMaxPricePerMonthPound = 0;
-
-            foreach ($rentPrices as $price) {
-                $perWeek[] = $price['prices']['week'] != '' ? $price['prices']['week'] : 0;
-                $perMonth[] = $price['prices']['month'] != '' ? $price['prices']['month'] : 0;
-            }
-
-            if ( ! empty($perWeek) > 0) {
-                $rentMinPricePerWeek = min($perWeek);
-                $rentMaxPricePerWeek = max($perWeek);
-            }
-
-            if ( ! empty($perMonth) > 0) {
-                $rentMinPricePerMonth = min($perMonth);
-                $rentMaxPricePerMonth = max($perMonth);
-            }
-
-            //
-            foreach ($rentPricesPound as $price) {
-                $perWeekPound[] = $price['prices']['week'] != '' ? $price['prices']['week'] : 0;
-                $perMonthPound[] = $price['prices']['month'] != '' ? $price['prices']['month'] : 0;
-            }
-
-            if ( ! empty($perWeekPound) > 0) {
-                $rentMinPricePerWeekPound = min($perWeekPound);
-                $rentMaxPricePerWeekPound = max($perWeekPound);
-            }
-
-            if ( ! empty($perMonthPound) > 0) {
-                $rentMinPricePerMonthPound = min($perMonthPound);
-                $rentMaxPricePerMonthPound = max($perMonthPound);
-            }
-
-            $pages = Page::with('contentDefault')->where('status', 1)->orderBy('position','asc')->get();
-
-            return view('realstate.property', compact(
-                'mainProperty', 
-                'property', 
-                'static_data', 
-                'features', 
-                'default_language', 
-                'similar', 
-                'reviews', 
-                'dates', 
-                'recent_properties', 
-                'last_posts', 
-                'related_properties',
-                'title', 
-                'categories', 
-                'countries', 
-                'locations',
-                'saleMinPrice',
-                'saleMaxPrice',
-                'rentMinPricePerWeek',
-                'rentMaxPricePerWeek',
-                'rentMinPricePerMonth',
-                'rentMaxPricePerMonth',
-                'saleMinPricePound',
-                'saleMaxPricePound',
-                'rentMinPricePerWeekPound',
-                'rentMaxPricePerWeekPound',
-                'rentMinPricePerMonthPound',
-                'rentMaxPricePerMonthPound',
-                'pages'
-                )
-            );
-        } else {
+        if (empty($property)) {
             abort(404);
         }
+
+        $title = $property->contentload->name;
+
+        // Get booked dates for calendar
+        $dates = PropertyDate::where('property_id', $property->id)->pluck('dates')->toArray();
+
+        if ($dates || !count($dates)) {
+            $dates = [];
+        }
+
+        $bookings = Booking::where('property_id', $property->id)->get();
+
+        foreach ($bookings as $booking) {
+            $date = generateDateRangeB(Carbon::createFromFormat('Y-m-d', $booking->start_date), Carbon::createFromFormat('Y-m-d', $booking->end_date));
+
+            if ($date) {
+                $dates[] = $date;
+            }
+        }
+
+        if (isset($dates[0])) {
+            $dates = array_reduce($dates, 'array_merge', []);
+        }
+
+        $related_properties = Property::with([
+            'property_status',
+            'currency',
+            'images', 
+            'prop_location.contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+            'contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('id', '!=', $property->id)
+        ->where(function ($query) use ($property) {
+            $query->where('category_id', $property->category->id);
+        })
+        ->inRandomOrder()
+        ->limit(2)
+        ->get();
+
+        $features = Feature::all();
+
+
+        // $static_data = $this->static_data;
+        // $default_language = $this->default_language;
+        // $countries = Country::all();
+        // $locations = Location::all();
+        // $categories = Category::get();
+        // $property = Property::with([
+        //     'property_status',
+        //     'currency',
+        //     'images', 
+        //     'contentload' => function ($query) use ($default_language) {
+        //         $query->where('language_id', 2);
+        // }])
+        // ->where('status', 1)
+        // ->where('alias', $alias)
+        // ->first();
+
+        // if ( ! $property) {
+        //     $property = Property::with([
+        //         'property_status',
+        //         'currency',
+        //         'images', 
+        //         'contentload' => function ($query) use ($default_language) {
+        //             $query->where('language_id', 2);
+        //     }])
+        //     ->where('status', 1)
+        //     ->get()
+        //     ->filter(function($value) use($alias) {
+        //         return $value->property_info['property_reference'] == $alias;
+        //     })
+        //     ->first();
+        // }
+        
+        // $features = Feature::all();
+
+        // if ($property) {
+        //     // $title = $property->contentDefault->name;
+        //     $title = $property->contentload->name;
+        //     // Get booked dates for calendar
+        //     $dates = PropertyDate::where('property_id', $property->id)->pluck('dates')->toArray();
+
+        //     if ($dates || !count($dates)) {
+        //         $dates = [];
+        //     }
+
+        //     $bookings = Booking::where('property_id', $property->id)->get();
+
+        //     foreach ($bookings as $booking) {
+        //         $date = generateDateRangeB(Carbon::createFromFormat('Y-m-d', $booking->start_date), Carbon::createFromFormat('Y-m-d', $booking->end_date));
+
+        //         if ($date) {
+        //             $dates[] = $date;
+        //         }
+        //     }
+
+        //     if (isset($dates[0])) {
+        //         $dates = array_reduce($dates, 'array_merge', []);
+        //     }
+
+        //     $reviews = Review::where('property_id', $property->id)->where('status', 1)->take(3)->get();
+
+        //     $similar = Property::with([
+        //         'property_status',
+        //         'currency',
+        //         'images', 'contentload' => function ($query) use ($default_language) {
+        //         $query->where('language_id', $default_language->id);
+        //     }])->where('id', '!=', $property->id)->where(function ($query) use ($property) {
+        //         $query->where('category_id', $property->category->id);
+        //     })->inRandomOrder()->take(3)->get();
+
+        //     $mainProperty = $property;
+
+        //     $recent_properties = Property::with([
+        //             'property_status',
+        //             'currency'
+        //         ])
+        //         ->orderBy('created_at', 'desc')
+        //         ->where('status', 1)
+        //         ->take(Property::RECENT_PROPERTIES)
+        //         ->get();
+
+        //     $last_posts = Blog::with(['contentload' => function($query) use($default_language){
+        //         $query->where('language_id', $default_language->id);
+        //     }])->where('status', 1)
+        //     ->orderBy('created_at', 'desc')
+        //     ->take(3)
+        //     ->get();
+            
+        //     $properties = Property::with([
+        //             'property_status',
+        //             'currency'
+        //         ])
+        //         ->where('status', 1)
+        //         ->where('id', '!=', $mainProperty->id)
+        //         ->get();
+
+        //     $related_properties = $properties->each(function ($value) use($mainProperty) {
+        //         return (int) $value->prices['service_charge'] < ((int)$mainProperty->prices['service_charge'] + Property::PRICE_RANGE) && 
+        //         (int)$value->prices['service_charge'] < ((int)$mainProperty->prices['service_charge'] + Property::PRICE_RANGE);
+        //     })->take(Property::RELATED_PROPERTIES_COUNT);
+
+        //     $salePrices = Property::select("prices")
+        //     ->where('sales', '=', 1)
+        //     ->where('currency_id', 1)
+        //     ->where('status', 1)
+        //     ->get();
+        
+        //     $salePricesPound = Property::select("prices")
+        //         ->where('sales', '=', 1)
+        //         ->where('currency_id', 2)
+        //         ->where('status', 1)
+        //         ->get();
+
+        //     $p = [];
+        //     $pPound = [];
+        //     $saleMinPrice = 0;
+        //     $saleMaxPrice = 0;
+        //     $saleMinPricePound = 0;
+        //     $saleMaxPricePound = 0;
+
+        //     foreach ($salePrices as $price) {
+        //         $p[] = $price['prices']['price'];
+        //     }
+
+        //     if ( ! empty($p) > 0) {
+        //         $saleMinPrice = min($p);
+        //         $saleMaxPrice = max($p);
+        //     }
+
+        //     foreach ($salePricesPound as $price) {
+        //         $pPound[] = $price['prices']['price'];
+        //     }
+
+        //     if ( ! empty($pPound) > 0) {
+        //         $saleMinPricePound = min($pPound);
+        //         $saleMaxPricePound = max($pPound);
+        //     }
+
+        //     $rentPrices = Property::select("prices")
+        //                     ->where('rentals', '=', 1)
+        //                     ->where('currency_id', 1)
+        //                     ->where('status', 1)
+        //                     ->get();
+            
+        //     $rentPricesPound = Property::select("prices")
+        //         ->where('rentals', '=', 1)
+        //         ->where('currency_id', 2)
+        //         ->where('status', 1)
+        //         ->get();
+
+        //     $perWeek = [];
+        //     $perMonth = [];
+        //     $rentMinPricePerWeek = 0;
+        //     $rentMaxPricePerWeek = 0;
+        //     $rentMinPricePerMonth = 0;
+        //     $rentMaxPricePerMonth = 0;
+
+        //     $perWeekPound = [];
+        //     $perMonthPound = [];
+        //     $rentMinPricePerWeekPound = 0;
+        //     $rentMaxPricePerWeekPound = 0;
+        //     $rentMinPricePerMonthPound = 0;
+        //     $rentMaxPricePerMonthPound = 0;
+
+        //     foreach ($rentPrices as $price) {
+        //         $perWeek[] = $price['prices']['week'] != '' ? $price['prices']['week'] : 0;
+        //         $perMonth[] = $price['prices']['month'] != '' ? $price['prices']['month'] : 0;
+        //     }
+
+        //     if ( ! empty($perWeek) > 0) {
+        //         $rentMinPricePerWeek = min($perWeek);
+        //         $rentMaxPricePerWeek = max($perWeek);
+        //     }
+
+        //     if ( ! empty($perMonth) > 0) {
+        //         $rentMinPricePerMonth = min($perMonth);
+        //         $rentMaxPricePerMonth = max($perMonth);
+        //     }
+
+        //     //
+        //     foreach ($rentPricesPound as $price) {
+        //         $perWeekPound[] = $price['prices']['week'] != '' ? $price['prices']['week'] : 0;
+        //         $perMonthPound[] = $price['prices']['month'] != '' ? $price['prices']['month'] : 0;
+        //     }
+
+        //     if ( ! empty($perWeekPound) > 0) {
+        //         $rentMinPricePerWeekPound = min($perWeekPound);
+        //         $rentMaxPricePerWeekPound = max($perWeekPound);
+        //     }
+
+        //     if ( ! empty($perMonthPound) > 0) {
+        //         $rentMinPricePerMonthPound = min($perMonthPound);
+        //         $rentMaxPricePerMonthPound = max($perMonthPound);
+        //     }
+
+        //     $pages = Page::with('contentDefault')->where('status', 1)->orderBy('position','asc')->get();
+
+        //     return view('realestate.property', compact(
+        //         'mainProperty', 
+        //         'property', 
+        //         'static_data', 
+        //         'features', 
+        //         'default_language', 
+        //         'similar', 
+        //         'reviews', 
+        //         'dates', 
+        //         'recent_properties', 
+        //         'last_posts', 
+        //         'related_properties',
+        //         'title', 
+        //         'categories', 
+        //         'countries', 
+        //         'locations',
+        //         'saleMinPrice',
+        //         'saleMaxPrice',
+        //         'rentMinPricePerWeek',
+        //         'rentMaxPricePerWeek',
+        //         'rentMinPricePerMonth',
+        //         'rentMaxPricePerMonth',
+        //         'saleMinPricePound',
+        //         'saleMaxPricePound',
+        //         'rentMinPricePerWeekPound',
+        //         'rentMaxPricePerWeekPound',
+        //         'rentMinPricePerMonthPound',
+        //         'rentMaxPricePerMonthPound',
+        //         'pages'
+        //         )
+        //     );
+        // } else {
+        //     abort(404);
+        // }
+
+        return view('sotogrande.property', compact(
+            'static_data',
+            'title',
+            'languages',
+            'language',
+            'languageId',
+            'page',
+            'locations',
+            'categories',
+            'minPrice',
+            'maxPrice',
+            'property',
+            'related_properties',
+            'features'
+        ));
     }
 
     public function indexPDF($alias)

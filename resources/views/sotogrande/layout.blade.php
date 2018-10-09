@@ -64,7 +64,7 @@
 <script src="/sg_assets/js/leaflet.markercluster.js"></script>
 <script src="/sg_assets/js/maps.js"></script>
 <script src="/sg_assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0N5pbJN10Y1oYFRd0MJ_v2g8W2QT74JE"></script>
+{{-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB0N5pbJN10Y1oYFRd0MJ_v2g8W2QT74JE"></script> --}}
 <script src="/sg_assets/js/ie-emulation-modes-warning.js"></script>
 <script src="/sg_assets/js/jquery.matchHeight.js"></script>
 <!-- Custom JS Script -->

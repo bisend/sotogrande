@@ -21,8 +21,17 @@
             max-width: 200px; 
         }
 
+        .main-image-container {
+            height: 300px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+        }
+
         .main-image {
+            height: 100%;
             width: 100%;
+            /* object-fit: cover; */
         }
 
         .other-image {
@@ -101,7 +110,7 @@
 	</style>
 </head>
 <body>
-	{{-- <header>
+	<header>
         <div class="logo-container">
             <img
                 class="logo"
@@ -109,16 +118,16 @@
                 alt="Logo"
             >
         </div>
-    </header> --}}
+    </header>
     <main class="container">
         @php($imgCounter = 0)
         @if( ! empty($property->images) && count($property->images) > 0)
-            <div class="main-image-container">
-                <img 
+            <div class="main-image-container" style="background-image: url({{URL::asset('images/data') . '/' . $property->images[$imgCounter]->image }})">
+                {{-- <img 
                     class="main-image"
                     src="{{ URL::asset('images/data') . '/' . $property->images[$imgCounter]->image }}" 
                     alt=""
-                >
+                > --}}
             </div>
             @if(count($property->images) > 1)
                 <div class="other-image-container">
@@ -213,6 +222,7 @@
                     @endforeach
                 </div>
             </div>
+            <br>
         @endif
         <div>
             <h2 class="property-title">{{ $property->contentload['name'] }}</h2>

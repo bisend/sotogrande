@@ -239,10 +239,10 @@
                         <div class="clearfix input-group">
                             <label class="input-group-btn">
                                 <span class="btn btn-primary">Default File
-                                    <input type="text" style="display: none;" name="default_file" value="findaproperty-agreement.doc">
+                                    <input type="text" style="display: none;" name="default_file" value="agreement.doc">
                                 </span>
                             </label>
-                            <input type="text" class="form-control" readonly value="findaproperty-agreement.doc">
+                            <input type="text" class="form-control" readonly value="agreement.doc">
                             <i class="material-icons small remove-property-file" data-remove-property-file="default">clear</i>
                         </div>
                         <br>

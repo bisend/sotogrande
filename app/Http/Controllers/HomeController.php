@@ -35,7 +35,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($language = 'en')
+    public function index($language = Languages::DEFAULT_LANGUAGE)
     {
         Languages::localizeApp($language);
 

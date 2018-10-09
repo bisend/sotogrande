@@ -385,7 +385,7 @@ $(function () {
     }
 
     if($('#contactMap').length){
-        LoadMap();
+        // LoadMap();
     }
 
 
@@ -746,6 +746,16 @@ $(document).ready(function () {
     });
     
     $('.blog.content-area-2  .blog-theme').matchHeight({
+        byRow: false,
+        property: 'height',
+    });
+    
+    $('.eq-slider').matchHeight({
+        byRow: false,
+        property: 'height',
+    });
+    
+    $('.related-properties img').matchHeight({
         byRow: false,
         property: 'height',
     });

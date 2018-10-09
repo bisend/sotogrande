@@ -239,7 +239,7 @@ class AdminPropertyController extends Controller
                 $img = InterventionImage::make(public_path() . '/images/data/'. $image);
                 $watermarkPath = public_path('/images/watermark.png');
                 if(File::exists($watermarkPath)) {
-                    $watermark = InterventionImage::make($watermarkPath);
+                    $watermark = InterventionImage::make($watermarkPath)->opacity(40);
                     $watermarkWidth = $watermark->width();
                     $imgWidth = $img->width();
                     if ($watermarkWidth > $imgWidth) {
@@ -408,7 +408,7 @@ class AdminPropertyController extends Controller
                     $img = InterventionImage::make(public_path() . '/images/data/'. $image);
                     $watermarkPath = public_path('/images/watermark.png');
                     if(File::exists($watermarkPath)) {
-                        $watermark = InterventionImage::make($watermarkPath);
+                        $watermark = InterventionImage::make($watermarkPath)->opacity(40);
                         $watermarkWidth = $watermark->width();
                         $imgWidth = $img->width();
                         if ($watermarkWidth > $imgWidth) {
@@ -417,7 +417,7 @@ class AdminPropertyController extends Controller
                                 $constraint->aspectRatio();
                             });
                         }
-                        $img->insert($watermark, 'center');
+                        $img->insert($watermark, 'center', 10, 10);
                     }
                     $img->save();
                 }

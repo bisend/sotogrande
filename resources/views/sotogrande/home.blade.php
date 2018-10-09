@@ -41,12 +41,14 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">
-                                <h2>{{ $slide->contentload->name }}</h2>
-                                {!! str_limit($slide->contentload->description, 200, ' ...') !!}
+                                <h2 class="slider-prop-name">{{ $slide->contentload->name }}</h2>
+                                <div class="slider-prop-desc">
+                                    {!! str_limit($slide->contentload->description, 200, ' ...') !!}
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="col-md-12 col-sm-12 col-xs-12 slider-prop-amen">
                                 @if($slide->property_info['bedrooms'])
                                     <div class="slider-icon-block"><i class="fa fa-bed"></i>{{ $slide->property_info['bedrooms'] }}</div>
                                 @endif
@@ -56,7 +58,7 @@
                             </div>
                         </div>
                         <div class="row mt-4 mb-2">
-                            <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="col-md-6 col-sm-6 col-12 slider-prop-link">
                                 <div class="form-group">
                                     <a href="{{ url_property($slide->alias, $language) }}" 
                                         class="search-button btn-md btn-color"
@@ -65,7 +67,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                            <div class="col-md-6 col-sm-6 col-12 slider-prop-status text-right">
                                 @if($slide->sales == 1 && $slide->rentals == 1)
                                     <span class="slider-label">Sale</span>
                                     <span class="slider-label">Rental</span>
@@ -274,7 +276,7 @@
                               </select>
                           </div>
                       </div> --}}
-                      <div class="col-6 col-lg-3 col-md-3">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-12">
                           <div class="form-group">
                               <label>Property Status</label>
                               <select 
@@ -288,7 +290,7 @@
                               </select>
                           </div>
                       </div>
-                      <div class="col-6 col-lg-3 col-md-3">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-12">
                         <div class="form-group">
                             <label>Property Type</label>
                             <select 
@@ -303,7 +305,7 @@
                             </select>
                         </div>
                       </div>
-                      <div class="col-6 col-lg-3 col-md-3">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-12">
                           <div class="form-group">
                               <label>Location</label>
                               <select 
@@ -318,7 +320,7 @@
                               </select>
                           </div>
                       </div>
-                      <div class="col-6 col-lg-3 col-md-3 rooms-filter">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-12 rooms-filter">
                         <div class="form-group">
                             <label class="beds-label">Beds</label>
                             <div class="beds-radio">
@@ -369,7 +371,7 @@
                               </select>
                           </div>
                       </div> --}}
-                      <div class="col-6 col-lg-3 col-md-3">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-12">
                         <div class="form-group" data-search-property-price>
                             <div class="range-slider">
                                 <div 
@@ -385,7 +387,7 @@
                             </div>
                         </div>
                       </div>
-                      <div class="col-6 col-lg-3 col-md-3">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-6">
                         <div class="form-group">
                             <input class="form-control" 
                                 placeholder="Search by reference" 
@@ -395,7 +397,7 @@
                             >
                         </div>
                       </div>
-                      <div class="col-6 col-lg-3 col-md-3">
+                      <div class="col-xl-3 col-lg-6 col-md-6 col-6">
                           <div class="form-group">
                               <button 
                                 class="search-button btn-md btn-color" 

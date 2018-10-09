@@ -126,7 +126,7 @@ $(function () {
             window["pJSDom"] = [];
         }
 
-        loadParticlesBackground(e.to);
+        // loadParticlesBackground(e.to);
     })
 
     $('#carouselExampleIndicators').carousel({
@@ -575,7 +575,7 @@ $(function () {
     // if($('#particles-banner').length > 0) {
     if($('[data-particles]').length > 0) {
         // $('[data-particles]').each(function (index, elem) {
-            loadParticlesBackground(0);
+            // loadParticlesBackground(0);
         // }); 
     }
 

@@ -291,10 +291,14 @@ Route::post('/search', 'SearchController@index')->name('search');
 Route::post('/search/sale', 'SearchController@searchSale')->name('search-sale');
 Route::get('/contact', 'HomeController@contact')->name('contact');
 Route::post('/mail/sendcontact', 'EmailController@contact')->name('send_contact');
-Route::get('/blog', 'BlogController@index')->name('blog');
 Route::get('/logout', 'UserController@logout')->name('logout');
 Route::get('/page/{alias}', 'PageController@index')->name('page');
 
+Route::get('/blog/{language?}', 'BlogController@index')
+->where([
+    'language' => '^(en|es)?$'
+])
+->name('blog');
 Route::get('/blog/post/{alias}/{language?}', 'BlogController@post')
 ->where([
     'language' => '^(en|es)?$'

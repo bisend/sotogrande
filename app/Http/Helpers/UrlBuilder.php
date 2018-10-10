@@ -201,7 +201,7 @@ class UrlBuilder
 
     const BLOG_PAGE = 'blog/post';
 
-    const BLOG_ALL_PAGE = 'blog/all';
+    const BLOG_ALL_PAGE = 'blog';
     
     const LOOKBOOK_PAGE = 'lookbook';
 

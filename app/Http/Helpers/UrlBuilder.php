@@ -64,6 +64,8 @@ class UrlBuilder
      */
     const SALE_PAGE = 'sale';
 
+    const RENT_PAGE = 'rent';
+
     /**
      * confirm page
      * @var string
@@ -665,6 +667,16 @@ class UrlBuilder
         $url = self::concatParts([
             url(self::URL_ROOT),
             self::SALE_PAGE
+        ]);
+
+        return self::localize($url, $language);
+    }
+    
+    public static function rent($language = Languages::DEFAULT_LANGUAGE)
+    {
+        $url = self::concatParts([
+            url(self::URL_ROOT),
+            self::RENT_PAGE
         ]);
 
         return self::localize($url, $language);

@@ -24,6 +24,22 @@
                           </li>
                           <li class="nav-item">
                             <a 
+                                href="{{ url_sale($language) }}" 
+                                class="nav-link"
+                            >
+                                Sale
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a 
+                                href="{{ url_rent($language) }}" 
+                                class="nav-link"
+                            >
+                                Rent
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a 
                                 href="{{ url_all_blogs($language) }}" 
                                 class="nav-link">
                                     Blog

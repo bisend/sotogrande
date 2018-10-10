@@ -372,6 +372,23 @@
                                       <div class="col-md-6">
                                           <div class="property-box">
                                               <div class="property-thumbnail">
+                                                    <div class="top-lables">
+                                                        <div class="lft">
+                                                            @if($property->sales == 1 && $property->rentals == 1)
+                                                                <span class="slider-label">Sale</span>
+                                                                <span class="slider-label">Rental</span>
+                                                            @elseif($property->rentals == 1)
+                                                                <span class="slider-label">Rental</span>
+                                                            @elseif($property->sales == 1)
+                                                                <span class="slider-label">Sale</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="rght">
+                                                            @if($property->property_status)
+                                                                <span class="slider-label">{{ $property->property_status->name }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                   <a href="{{ url_property($property->alias, $language) }}" class="property-img">
                                                       {{-- <div class="tag button alt featured">Featured</div> --}}
                                                       {{-- <div class="price-ratings-box"> --}}
@@ -418,6 +435,31 @@
                                                           <i class="fa fa-map-marker"></i>{{ $property->prop_location->contentload->location }}
                                                       </a>
                                                   </div>
+                                                  <div class="price">
+                                                        @if($property->sales == 1 && $property->rentals == 1)
+                                                            @if($property->prices['price'])
+                                                                <span>{{ $property->currency->symbol}} {{ $property->prices['price'] }} Price</span>
+                                                            @endif
+                                                            @if($property->prices['week'])
+                                                                <span>{{ $property->currency->symbol}} {{ $property->prices['week'] }} Per Week</span>
+                                                            @endif
+                                                            @if($property->prices['month'])
+                                                                <span>{{ $property->currency->symbol}} {{ $property->prices['month'] }} Per Month</span>
+                                                            @endif
+                                                        @elseif($property->rentals == 1)
+                                                            @if($property->prices['week'])
+                                                                <span>{{ $property->currency->symbol}} {{ $property->prices['week'] }} Per Week</span>
+                                                            @endif
+                                                            @if($property->prices['month'])
+                                                                <span>{{ $property->currency->symbol}} {{ $property->prices['month'] }} Per Month</span>
+                                                            @endif
+                                                        @elseif($property->sales == 1)
+                                                            @if($property->prices['price'])
+                                                                <span>{{ $property->currency->symbol}} {{ $property->prices['price'] }} Price</span>
+                                                            @endif
+                                                        @endif
+                                                    </div>
+                                                    <br>
                                                   <ul class="facilities-list clearfix">
                                                       @if ( ! empty($property['property_info']['bedrooms']))
                                                         <li>

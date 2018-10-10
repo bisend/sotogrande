@@ -420,6 +420,13 @@ if (!function_exists('url_sale')) {
     }
 }
 
+if (!function_exists('url_rent')) {
+    function url_rent($language = Languages::DEFAULT_LANGUAGE)
+    {
+        return UrlBuilder::rent($language);
+    }
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 /*
  * setting formatted price

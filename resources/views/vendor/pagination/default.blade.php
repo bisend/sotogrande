@@ -1,5 +1,6 @@
 @if ($paginator->hasPages())
-    <div class="pagination-box hidden-mb-45">
+    {{-- <div class="pagination-box hidden-mb-45"> --}}
+    <div class="pagination-box">
         <nav aria-label="Page navigation example">
             <ul class="pagination">
                 {{-- Previous Page Link --}}

@@ -309,8 +309,17 @@ Route::get('/explore/properties', 'ExploreController@properties')->name('explore
 Route::get('/explore/services', 'ExploreController@services')->name('explore_services');
 
 Route::get('/commercial', 'CommercialController@index')->name('commercial');
-Route::get('/sale', 'SaleController@index')->name('sale');
-Route::get('/rent', 'RentController@index')->name('rent');
+
+Route::get('/sale/{language?}', 'SaleController@index')
+->where([
+    'language' => '^(en|es)?$'
+])
+->name('sale');
+Route::get('/rent/{language?}', 'RentController@index')
+->where([
+    'language' => '^(en|es)?$'
+])
+->name('rent');
 
 // Payments
 Route::post('/payment-page', 'PaymentController@index')->name('booking_pay_page');

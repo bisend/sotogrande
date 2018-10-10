@@ -62,6 +62,15 @@ class RentController extends Controller
 
         $propertiesCount = $properties->total();
 
+        $pages = Page::with([
+            'contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->orderBy('position', 'asc')
+        ->get();
+
         // $static_data = $this->static_data;
 
         // $default_language = $this->default_language;
@@ -325,7 +334,8 @@ class RentController extends Controller
             'language',
             'page',
             'properties',
-            'propertiesCount'
+            'propertiesCount',
+            'pages'
         ));
     }
 }

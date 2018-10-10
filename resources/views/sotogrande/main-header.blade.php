@@ -45,6 +45,16 @@
                                     Blog
                             </a>
                           </li>
+                            @if(isset($pages) && count($pages) > 0)
+                                @foreach($pages as $page)
+                                    <li class="nav-item">
+                                        {{-- <a href="{{ route('page', ['alias' => $page->alias] ) }}" class="nav-link"> --}}
+                                        <a href="{{ url_page($page->alias, $language) }}" class="nav-link">
+                                            {{ $page->contentload->title }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @endif
                           {{-- <li class="nav-item dropdown active">
                               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Index

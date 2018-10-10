@@ -292,7 +292,12 @@ Route::post('/search/sale', 'SearchController@searchSale')->name('search-sale');
 Route::get('/contact', 'HomeController@contact')->name('contact');
 Route::post('/mail/sendcontact', 'EmailController@contact')->name('send_contact');
 Route::get('/logout', 'UserController@logout')->name('logout');
-Route::get('/page/{alias}', 'PageController@index')->name('page');
+
+Route::get('/page/{alias}/{language?}', 'PageController@index')
+->where([
+    'language' => '^(en|es)?$'
+])
+->name('page');
 
 Route::get('/blog/{language?}', 'BlogController@index')
 ->where([

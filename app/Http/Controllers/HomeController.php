@@ -135,6 +135,14 @@ class HomeController extends Controller
         $minPrice = $prices->min();
         $maxPrice = $prices->max();
         
+        $pages = Page::with([
+            'contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->orderBy('position', 'asc')
+        ->get();
 
         // // Get the properties (Eager Load)
         // $number_of_properties = get_setting('fp_properties_count', 'design');;
@@ -322,7 +330,8 @@ class HomeController extends Controller
             'posts',
             'minPrice',
             'maxPrice',
-            'page'
+            'page',
+            'pages'
         ));
     }
 

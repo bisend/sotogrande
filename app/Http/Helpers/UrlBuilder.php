@@ -66,6 +66,8 @@ class UrlBuilder
 
     const RENT_PAGE = 'rent';
 
+    const PAGE = 'page';
+
     /**
      * confirm page
      * @var string
@@ -1146,6 +1148,22 @@ class UrlBuilder
         $url = self::concatParts([
             url(self::URL_ROOT),
             self::BLOG_PAGE,
+            $alias
+        ]);
+
+        return self::localize($url, $language);
+    }
+    
+    public static function page($alias = null, $language = Languages::DEFAULT_LANGUAGE)
+    {
+        if ( ! $alias)
+        {
+            return self::UNDEFINED_URL;
+        }
+
+        $url = self::concatParts([
+            url(self::URL_ROOT),
+            self::PAGE,
             $alias
         ]);
 

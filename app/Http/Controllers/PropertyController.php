@@ -146,6 +146,14 @@ class PropertyController extends Controller
 
         $features = Feature::all();
 
+        $pages = Page::with([
+            'contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
+        ->where('status', 1)
+        ->orderBy('position', 'asc')
+        ->get();
 
         // $static_data = $this->static_data;
         // $default_language = $this->default_language;
@@ -391,7 +399,8 @@ class PropertyController extends Controller
             'maxPrice',
             'property',
             'related_properties',
-            'features'
+            'features',
+            'pages'
         ));
     }
 

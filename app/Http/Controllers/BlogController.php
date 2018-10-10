@@ -39,9 +39,13 @@ class BlogController extends Controller
         ->orderBy('created_at', 'desc')
         ->paginate(9);
 
-        $pages = Page::with('contentDefault')
+        $pages = Page::with([
+            'contentload' => function ($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            },
+        ])
         ->where('status', 1)
-        ->orderBy('position','asc')
+        ->orderBy('position', 'asc')
         ->get();
 
         // return view('realstate.blog.blog-list', compact('posts', 'static_data', 'title', 'pages'));
@@ -91,9 +95,13 @@ class BlogController extends Controller
 
         if ($post) {
             $title = $post->contentDefault->title;
-            $pages = Page::with('contentDefault')
+            $pages = Page::with([
+                'contentload' => function ($query) use ($languageId) {
+                    $query->where('language_id', $languageId);
+                },
+            ])
             ->where('status', 1)
-            ->orderBy('position','asc')
+            ->orderBy('position', 'asc')
             ->get();
             // return view('realstate.blog.blog-single', compact('post', 'last_posts', 'static_data', 'title', 'pages'));
             return view('sotogrande.blog-single', compact(

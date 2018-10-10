@@ -769,6 +769,11 @@ $(document).ready(function () {
         byRow: false,
         property: 'height',
     });
+    
+    $('.property-img img').matchHeight({
+        byRow: false,
+        property: 'height',
+    });
 
     // CHECK IF HAS BEDS IN REQUEST START
     var urlQuery = window.location.href.split('&');

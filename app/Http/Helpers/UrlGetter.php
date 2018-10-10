@@ -427,6 +427,13 @@ if (!function_exists('url_rent')) {
     }
 }
 
+if (!function_exists('url_page')) {
+    function url_page($alias = null, $language = Languages::DEFAULT_LANGUAGE)
+    {
+        return UrlBuilder::page($alias, $language);
+    }
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 /*
  * setting formatted price

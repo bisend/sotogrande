@@ -252,7 +252,7 @@
                             <div class="floor-plans mb-60">
                               	@if( ! empty($property->pdfFile['file_name']))
                                   <a 
-                                    href="{{'/files/' . $property->pdfFile['file_name'] . '.pdf'}}" 
+                                    href="{{'/public/files/' . urlencode($property->pdfFile['file_name']) . '.pdf'}}" 
                                     target="_blank" 
                                     class="pdf-down-prop"
                                   >

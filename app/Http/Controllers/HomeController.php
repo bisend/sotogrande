@@ -364,23 +364,34 @@ class HomeController extends Controller
         ));
     }
 
-    public function reCaptcha(Request $request){
-        if($request->ajax()){
-            $parameters = http_build_query([
-                'secret'   => get_setting('reCaptcha_api_secret', 'site'),
-                'response' => $request->response,
-            ]);
-            $url           = 'https://www.google.com/recaptcha/api/siteverify?' . $parameters;
-            $checkResponse = null;
-            $checkResponse = file_get_contents($url);
-            if (is_null($checkResponse) || empty( $checkResponse )) {
-                response()->json(['status' => false]);
-            }
-            $response = json_decode($checkResponse);
-            return response()->json(['status' => $response->success]);
-        }else{
-            return response()->json($static_data['strings']['something_happened'], 400);
-        }
+    public function reCaptcha($request)
+    {
+        $parameters = http_build_query([
+            'secret'   => get_setting('reCaptcha_api_secret', 'site'),
+            'response' => $request->recaptchaPayload,
+        ]);
+        $url = 'https://www.google.com/recaptcha/api/siteverify?'. $parameters;
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('POST', $url);
+        $response = $response->getBody()->getContents();
+        // dd(json_decode($response);
+        return json_decode($response);
+        // if($request->ajax()){
+            // $parameters = http_build_query([
+            //     'secret'   => get_setting('reCaptcha_api_secret', 'site'),
+            //     'response' => $request->recaptchaPayload,
+            // ]);
+            // $url           = 'https://www.google.com/recaptcha/api/siteverify?' . $parameters;
+            // $checkResponse = null;
+            // $checkResponse = file_get_contents($url);
+            // if (is_null($checkResponse) || empty( $checkResponse )) {
+            //     response()->json(['status' => false]);
+            // }
+            // $response = json_decode($checkResponse);
+            // return response()->json(['status' => $response->success]);
+        // }else{
+            // return response()->json($static_data['strings']['something_happened'], 400);
+        // }
     }
 
     public function review(Request $request){
@@ -398,9 +409,12 @@ class HomeController extends Controller
 
     public function registerInterest(Request $request)
     {
+        $data = $request->only(['name', 'email', 'phone', 'regPage']);
 
-        if($request->ajax()){
-            $data = $request->only(['name', 'email', 'phone', 'regPage']);
+        $recapchaResponse = $this->reCaptcha($request);
+
+        // if($request->ajax()){
+        if ( ! empty($recapchaResponse) && $recapchaResponse->success) {
             $data['register_interest'] = 1;
             $data['reference'] = $data['regPage'];
             $property_alias = explode('/', $data['reference']);
@@ -415,23 +429,28 @@ class HomeController extends Controller
                     $data['reference_name'] = $property_alias;
                 }
             }
-            $data['subject'] = 'Register Interest Request from Findaproperty';
+            $data['subject'] = 'Register Interest Request from site';
             if (RequestModel::create($data)) {
                 Mail::to(get_setting('contact_email', 'site'))->send(new RequestMails($data));
                 $response['status'] = 'success';
                 return $response;
             }
-            $response['status'] = 'error';
+            $response['success'] = true;
             return $response;
         }
+
+        return response()->json($recapchaResponse);
     }
 
     public function callback(Request $request)
     {
-        if($request->ajax()){
-            $data = $request->only(['name', 'phone', 'backPage']);
+        $data = $request->only(['name', 'phone', 'backPage']);
+
+        $recapchaResponse = $this->reCaptcha($request);
+
+        if ( ! empty($recapchaResponse) && $recapchaResponse->success) {
             $data['callback'] = 1;
-            $data['subject'] = 'Call Back Request from Findaproperty';
+            $data['subject'] = 'Call Back Request from site';
             $data['reference'] = $data['backPage'];
             $property_alias = explode('/', $data['reference']);
             $property_alias = end($property_alias);
@@ -445,13 +464,14 @@ class HomeController extends Controller
                     $data['reference_name'] = $property_alias;
                 }
             }
+
             if (RequestModel::create($data)) {
                 Mail::to(get_setting('contact_email', 'site'))->send(new RequestMails($data));
-                $response['status'] = 'success';
+                $response['success'] = true;
                 return $response;
             }
-            $response['status'] = 'error';
-            return $response;
-        }
+        } 
+
+        return response()->json($recapchaResponse);
     }
 }

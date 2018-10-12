@@ -1,6 +1,9 @@
 @extends('sotogrande.layout')
 
 @section('mainsection')
+
+<input type="hidden" data-property-reference value="{{ $property->property_info['property_reference'] }}">
+
 <!-- Sub banner start -->
 <div class="sub-banner overview-bgi">
     <div class="container">

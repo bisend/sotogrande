@@ -1,3 +1,6 @@
+var RECAPTCHA_SITE_KEY = $('[data-recaptcha-site-key]').val();
+var PROPERTY_REFERENCE = $('[data-property-reference]').val() ? $('[data-property-reference]').val() : null;
+
 $(function () {
 
     "use strict";
@@ -833,7 +836,298 @@ $('body').on('click', '[data-search-submit]', function (event) {
 
     url += query;
 
-    console.log(url);
-
     window.location.href = url;
+});
+
+// CALLBACK AND INTEREST FUNC
+var regCaptchaError = true;
+var callbackCaptchaError = true;
+
+var verifyCallbackReg = function (response) {
+    $('#recaptcha-error-reg').hide();
+    if (response == '') {
+        regCaptchaError = true;
+    } else {
+        regCaptchaError = false;
+    }
+};
+
+var verifyCallback = function (response) {
+    $('#recaptcha-error-callback').hide();
+    if (response == '') {
+        callbackCaptchaError = true;
+    } else {
+        callbackCaptchaError = false;
+    }
+};
+
+var widgetId1;
+var widgetId2;
+var onloadCallback = function () {
+
+    widgetId1 = grecaptcha.render('call-back-captcha', {
+        'sitekey': RECAPTCHA_SITE_KEY,
+        'callback': verifyCallback
+    });
+    widgetId2 = grecaptcha.render(document.getElementById('interest-captcha'), {
+        'sitekey': RECAPTCHA_SITE_KEY,
+        'callback': verifyCallbackReg
+    });
+
+};
+
+var objToStick = $(".featured-properties.content-area-2"); //Получаем нужный объект
+
+if (objToStick.length) {
+	var topOfObjToStick = objToStick.offset().top; //Получаем начальное расположение нашего блока
+    var windowScroll = $(window).scrollTop(); //Получаем величину, показывающую на сколько прокручено окно
+		if (windowScroll > topOfObjToStick) { // Если прокрутили больше, чем расстояние до блока, то приклеиваем его
+            $('[data-callback-form]').show();
+		} else {
+            $('[data-callback-form]').hide();
+		};
+    
+	$(window).scroll(function () {
+		var windowScroll = $(window).scrollTop(); //Получаем величину, показывающую на сколько прокручено окно
+		if (windowScroll > topOfObjToStick) { // Если прокрутили больше, чем расстояние до блока, то приклеиваем его
+            $('[data-callback-form]').show();
+		} else {
+            $('[data-callback-form]').hide();
+		};
+	});
+}
+
+
+$('body').on('focus', '[data-callback-name]', function (e) {
+    var $name = $('[data-callback-name]');
+    $name.attr('placeholder', 'Name');
+    $(this).removeClass('incorrect-input');
+});
+
+$('body').on('focus', '[data-callback-phone]', function (e) {
+    var $phone = $('[data-callback-phone]');
+    $phone.attr('placeholder', 'Phone');
+    $(this).removeClass('incorrect-input');
+});
+
+$('body').on('click', '[data-callback-submit]', function (e) {
+    e.preventDefault();
+
+    var $name = $('[data-callback-name]');
+    var $phone = $('[data-callback-phone]');
+    var $gRecaptchaPayload = $('#g-recaptcha-response');
+
+    var name = $name.val();
+    var phone = $phone.val();
+    var backPage = window.location.href;
+    var token = $('[name="_token"]').val();
+    var callbackError = false;
+    var gRecaptchaPayload = $gRecaptchaPayload.val();
+
+    if (name == '') {
+        $name.val('');
+        $name.attr('placeholder', 'Enter the correct name');
+        $name.addClass('incorrect-input');
+        callbackError = true;
+    }
+
+    if (name.length > 30) {
+        $name.val('');
+        $name.attr('placeholder', 'Maximum 30 characters');
+        $name.addClass('incorrect-input');
+        callbackError = true;
+    }
+
+    if (phone == '') {
+        $phone.val('');
+        $phone.attr('placeholder', 'Enter phone number');
+        $phone.addClass('incorrect-input');
+        callbackError = true;
+    }
+
+    if (callbackCaptchaError == true) {
+        callbackError = true;
+        $('#recaptcha-error-callback').show();
+    }
+
+
+
+    if (callbackError == false) {
+
+        $.ajax({
+            url: '/request/callback',
+            type: 'post',
+            data: {
+                _token: token,
+                name: name,
+                phone: phone,
+                backPage: backPage,
+                recaptchaPayload: gRecaptchaPayload
+            },
+            success: function (response) {
+                if (response.success || response.status) {
+                        $name.val('');
+                        $name.attr('placeholder', 'Name');
+                        $name.removeClass('incorrect-input');
+
+                        $phone.val('');
+                        $phone.attr('placeholder', 'Phone');
+                        $phone.removeClass('incorrect-input');
+
+                        grecaptcha.reset(widgetId1);
+
+                        $('#successModal').modal('show')
+                } else {
+                    callbackCaptchaError = true;
+                    callbackError = true;
+                    grecaptcha.reset(widgetId1);
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+    }
+
+});
+
+/* ---    send-register-form     ---- */
+
+function validateEmail(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}
+
+$("#interest-phone").keypress(function (e) {
+    if (e.which != 43 && e.which != 41 && e.which != 40 && e.which != 46 && e.which != 45 && e.which != 46 &&
+        !(e.which >= 48 && e.which <= 57)) {
+        return false;
+    }
+});
+
+$("#callback-phone").keypress(function (e) {
+    if (e.which != 43 && e.which != 41 && e.which != 40 && e.which != 46 && e.which != 45 && e.which != 46 &&
+        !(e.which >= 48 && e.which <= 57)) {
+        return false;
+    }
+});
+
+$('body').on('click', '[data-interest-submit]', function (e) {
+    e.preventDefault();
+
+    var regPage = window.location.href;
+
+    var $name = $('[data-interest-name]');
+    var $email = $('[data-interest-email]');
+    var $phone = $('[data-interest-phone]');
+    var $gRecaptchaPayload = $('#g-recaptcha-response-1');
+
+    var name = $name.val();
+    var email = $email.val();
+    var phone = $phone.val();
+    var saveEmail = $email.val();
+    var token = $('[name="_token"]').val();
+    var registrError = false;
+    var gRecaptchaPayload = $gRecaptchaPayload.val();
+
+
+    $email.on('focus', function () {
+        $email.attr('placeholder', 'Email');
+        $email.val(saveEmail);
+    })
+
+    if (name == '') {
+        $name.val('');
+        $name.attr('placeholder', 'Enter the correct name');
+        $name.addClass('incorrect-input');
+        registrError = true;
+    }
+
+    if (name.length > 30) {
+        $name.val('');
+        $name.attr('placeholder', 'Maximum 30 characters');
+        $name.addClass('incorrect-input');
+        registrError = true;
+    }
+
+    if (phone == '') {
+        $phone.val('');
+        $phone.attr('placeholder', 'Enter phone number');
+        $phone.addClass('incorrect-input');
+        registrError = true;
+    }
+
+    if (!validateEmail(email)) {
+        $email.val('');
+        $email.attr('placeholder', 'Enter the correct email');
+        $email.addClass('incorectEmail');
+        $email.addClass('incorrect-input');
+        registrError = true;
+    }
+
+    if (regCaptchaError == true) {
+        registrError = true;
+        $('#recaptcha-error-reg').show();
+    }
+
+    if (registrError == false) {
+
+        $.ajax({
+            url: '/request/registerinterest',
+            type: 'POST',
+            data: {
+                _token: token,
+                name: name,
+                email: email,
+                phone: phone,
+                regPage: regPage,
+                recaptchaPayload: gRecaptchaPayload
+            },
+            success: function (response) {
+                if (response.success || response.status) {
+                        $name.val('');
+                        $name.attr('placeholder', 'Name');
+                        $name.removeClass('incorrect-input');
+
+                        $email.val('');
+                        $email.attr('placeholder', 'Email');
+                        $email.removeClass('incorrect-input');
+
+                        $phone.val('');
+                        $phone.attr('placeholder', 'Phone');
+                        $phone.removeClass('incorrect-input');
+
+                        grecaptcha.reset(widgetId2);
+
+                        $('#successModal').modal('show')
+                } else {
+                    callbackCaptchaError = true;
+                    callbackError = true;
+                    grecaptcha.reset(widgetId2);
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+
+
+    }
+
+})
+
+
+/* ---    send-register-form END     ---- */
+
+$('body').on('click', '[data-option-panel-nav-item]', function(e) {
+    if ($(this).find('.nav-link').hasClass('active') || $(this).closest('[data-option-panel-double-form]').hasClass('option-panel-double-form-collapsed')) {
+        $(this).closest('[data-option-panel-double-form]').toggleClass('option-panel-double-form-collapsed');
+    }
+});
+
+$('body').on('click', '[data-option-panel-double-form-close]', function(e) {
+    $(this).closest('[data-option-panel-double-form]').addClass('option-panel-double-form-collapsed');
 });

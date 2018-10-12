@@ -341,7 +341,7 @@
                             @endif
                         </div>
                     </div> --}}
-                    {{-- <div class="col l6 m6 s12">
+                    <div class="col l6 m6 s12">
                         <div class="form-group  {{$errors->has('reCaptcha_api') ? 'has-error' : ''}}">
                             {{Form::text('reCaptcha_api', get_setting('reCaptcha_api', 'site'), ['class' => 'form-control', 'placeholder' => get_string('reCaptcha_api')])}}
                             {{Form::label('reCaptcha_api', get_string('reCaptcha_api'))}}
@@ -349,8 +349,8 @@
                                 <span class="wrong-error">* {{$errors->first('reCaptcha_api')}}</span>
                             @endif
                         </div>
-                    </div> --}}
-                    {{-- <div class="col l6 m6 s12">
+                    </div>
+                    <div class="col l6 m6 s12">
                         <div class="form-group  {{$errors->has('reCaptcha_api_secret') ? 'has-error' : ''}}">
                             {{Form::text('reCaptcha_api_secret', get_setting('reCaptcha_api_secret', 'site'), ['class' => 'form-control', 'placeholder' => get_string('reCaptcha_api_secret')])}}
                             {{Form::label('reCaptcha_api_secret', get_string('reCaptcha_api_secret'))}}
@@ -358,7 +358,7 @@
                                 <span class="wrong-error">* {{$errors->first('reCaptcha_api_secret')}}</span>
                             @endif
                         </div>
-                    </div> --}}
+                    </div>
                     <div class="col s12">
                         <div class="card-panel">
                             <span class="primary-color">*{{get_string('note_for_apiGoogleMap')}}</span>

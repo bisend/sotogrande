@@ -490,8 +490,8 @@ input[type=checkbox]:checked + label:before {
 
 /** Option Panel **/
 .option-panel {
-    z-index: 9999;
-    width: 215px;
+    z-index: 1040;
+    width: 300px;
     position: fixed;
     right: 0;
     top: 20%;
@@ -506,7 +506,7 @@ input[type=checkbox]:checked + label:before {
 }
 
 .option-panel-collased {
-    right: -215px;
+    right: -300px;
 }
 
 .option-panel h2 {
@@ -6553,6 +6553,137 @@ body.off-canvas-sidebar-open {
 .carousel-indicators {
     justify-content: start;
 }
+
+.submit-callback {
+    padding: 6px 23px 6px 23px;
+    width: 100%;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* RECAPTCHA */
+
+.recaptcha-style {
+    transform: scale(0.89);
+	transform-origin: 0 0;
+	margin-top: 10px;
+}
+
+.recaptcha-div {
+    position: relative;
+}
+
+.recaptcha-div #recaptcha-error-callback {
+	position: absolute;
+    z-index: 1;
+    font-size: 10px;
+    top: 2px;
+    left: 9px;
+    margin-bottom: 5px;
+    color: #f22c2c;
+	font-weight: 700;
+	display: none;
+}
+
+.recaptcha-div #recaptcha-error-reg {
+	position: absolute;
+    z-index: 1;
+    font-size: 10px;
+    top: 2px;
+    left: 9px;
+    margin-bottom: 5px;
+    color: #f22c2c;
+	font-weight: 700;
+	display: none;
+}
+
+.incorrect-input {
+    border: 1px solid #d25151;
+}
+
+.option-panel-double-form {
+    z-index: 1040;
+    width: 300px;
+    position: fixed;
+    right: 0;
+    top: 20%;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+    padding: 20px 15px;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -ms-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+.option-panel-double-form-collapsed {
+    right: -300px;
+}
+
+.close-option-panel-double-form {
+    position: absolute;
+    cursor: pointer;
+    right: 8px;
+}
+
+#callbackInterestTab {
+    position: absolute;
+    top: 0;
+    left: -52px;
+    flex-direction: column;
+    border: none;
+}
+
+#callbackInterestTab .nav-item {
+    margin-bottom: 0 !important;
+}
+
+.option-panel-double-form h2 {
+    font-size: 13px;
+    margin: 0 0 0 0;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: 500;
+}
+
+.nav-link-gray {
+    background-color: #c7c6c6;
+    border: none !important;
+    border-radius: 0 !important;
+    border-top-left-radius: 5px !important;
+    border-bottom-left-radius: 5px !important;
+}
+
+#successModal .modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#successModal .modal-body p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+#successModal .modal-body p i {
+    margin-right: 5px;
+    margin-top: -2px;
+}
+
+#successModal .modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#successModal .modal-footer button {
+    cursor: pointer;
+}
+
 
 /** MEDIA **/
 @media (max-width: 1200px) {

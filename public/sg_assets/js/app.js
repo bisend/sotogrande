@@ -864,15 +864,19 @@ var verifyCallback = function (response) {
 var widgetId1;
 var widgetId2;
 var onloadCallback = function () {
+    if ($('#call-back-captcha').length) {
+        widgetId1 = grecaptcha.render('call-back-captcha', {
+            'sitekey': RECAPTCHA_SITE_KEY,
+            'callback': verifyCallback
+        });
+    }
 
-    widgetId1 = grecaptcha.render('call-back-captcha', {
-        'sitekey': RECAPTCHA_SITE_KEY,
-        'callback': verifyCallback
-    });
-    widgetId2 = grecaptcha.render(document.getElementById('interest-captcha'), {
-        'sitekey': RECAPTCHA_SITE_KEY,
-        'callback': verifyCallbackReg
-    });
+    if ($('#interest-captcha').length) {
+        widgetId2 = grecaptcha.render(document.getElementById('interest-captcha'), {
+            'sitekey': RECAPTCHA_SITE_KEY,
+            'callback': verifyCallbackReg
+        });
+    }
 
 };
 
@@ -1131,3 +1135,140 @@ $('body').on('click', '[data-option-panel-nav-item]', function(e) {
 $('body').on('click', '[data-option-panel-double-form-close]', function(e) {
     $(this).closest('[data-option-panel-double-form]').addClass('option-panel-double-form-collapsed');
 });
+
+
+// CONTACT-PAGE-LOGIC
+$("#contact-phone").keypress(function (e) {
+    if (e.which != 43 && e.which != 41 && e.which != 40 && e.which != 46 && e.which != 45 && e.which != 46 &&
+        !(e.which >= 48 && e.which <= 57)) {
+        return false;
+    }
+});
+
+$('body').on('click', '[data-contact-page-submit]', function (e) {
+    e.preventDefault();
+    
+    var $name = $('[data-contact-page-name]');
+    var $email = $('[data-contact-page-email]');
+    var $phone = $('[data-contact-page-phone]');
+    var $message = $('[data-contact-page-message]');
+
+    var name = $name.val();
+    var email = $email.val();
+    var phone = $phone.val();
+    var subject = 'New feedback';
+    var message = $message.val();
+    var token = $('[name="_token"]').val();
+
+    var saveEmail = $email.val();
+
+    var error = false;
+
+    $name.on('focus', function () {
+        $name.removeClass('incorrect-input');
+    });
+    $email.on('focus', function () {
+        $email.removeClass('incorrect-input');
+        $email.attr('placeholder', 'Email*');
+        $email.val(saveEmail);
+    });
+    $phone.on('focus', function () {
+        $phone.removeClass('incorrect-input');
+    });
+    $message.on('focus', function () {
+        $message.removeClass('incorrect-input');
+    });
+    
+    if(name == ''){
+        $name.val('');
+        // $name.attr('placeholder', 'Name');
+        $name.addClass('incorrect-input');
+        error = true;
+    }else{
+        $name.removeClass('incorrect-input');
+    }
+
+    if (name.length > 30) {
+        $name.val('');
+        $name.attr('placeholder', 'Maximum 30 characters');
+        $name.addClass('incorrect-input');
+        error = true;
+    }
+
+    if (!validateEmail(email)) {
+        $email.val('');
+        // $email.attr('placeholder', 'Enter the correct email');
+        $email.addClass('incorectEmail');
+        $email.addClass('incorrect-input');
+        error = true;
+    }else{
+        $email.removeClass('incorrect-input');
+    }
+
+    if(phone == ''){
+        $phone.val('');
+        $phone.attr('placeholder', 'Phone*');
+        $phone.addClass('incorrect-input');
+        error = true;
+    }else{
+        $phone.removeClass('incorrect-input');
+    }
+
+    if(message == '') {
+        $message.val('');
+        $message.attr('placeholder', 'Write message*');
+        $message.addClass('incorrect-input');
+        error = true;
+    }else{
+        $message.removeClass('incorrect-input');
+    }
+
+    if(error == false) {
+
+        $.ajax({
+            url: '/mail/sendcontact',
+            type: 'POST',
+            data: {
+                _token: token,
+                name: name,
+                email: email,
+                phone: phone,
+                subject: subject,
+                message: message
+            },
+            success: function (data) {
+                if (data.success) {
+                    $name.val('');
+                    $name.attr('placeholder', 'Name*');
+                    $name.removeClass('incorrect-input');
+
+                    $email.val('');
+                    $email.attr('placeholder', 'Email*');
+                    $email.removeClass('incorrect-input');
+
+                    $phone.val('');
+                    $phone.attr('placeholder', 'Phone*');
+                    $phone.removeClass('incorrect-input');
+
+                    // $('#contact-subject').val('');
+                    // $('#contact-subject').attr('placeholder', 'Subject');
+                    // $('#contact-subject').removeClass('incorrect-input');
+
+                    $message.val('');
+                    $message.attr('placeholder', 'Write message*');
+                    $message.removeClass('incorrect-input');
+
+                    saveEmail = '';
+
+                    $('#successModal').modal('show');
+                }
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+});
+
+// CONTACT-PAGE-LOGIC

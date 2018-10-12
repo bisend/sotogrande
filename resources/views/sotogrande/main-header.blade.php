@@ -38,13 +38,6 @@
                                 Rent
                             </a>
                           </li>
-                          <li class="nav-item">
-                            <a 
-                                href="{{ url_all_blogs($language) }}" 
-                                class="nav-link">
-                                    Blog
-                            </a>
-                          </li>
                             @if(isset($pages) && count($pages) > 0)
                                 @foreach($pages as $page)
                                     <li class="nav-item">
@@ -55,6 +48,18 @@
                                     </li>
                                 @endforeach
                             @endif
+                          <li class="nav-item">
+                            <a 
+                                href="{{ url_all_blogs($language) }}" 
+                                class="nav-link">
+                                    Blog
+                            </a>
+                          </li>
+                          <li class="nav-item">
+                            <a href="{{ url_contact($language) }}" class="nav-link">
+                                Contact Us
+                            </a>
+                          </li>
                           {{-- <li class="nav-item dropdown active">
                               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Index

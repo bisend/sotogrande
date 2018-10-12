@@ -289,8 +289,14 @@ Route::get('/login', 'UserController@login')->name('login')->middleware('logged'
 Route::get('/activate-account', 'UserController@activateAccount')->name('activate_account');
 Route::post('/search', 'SearchController@index')->name('search');
 Route::post('/search/sale', 'SearchController@searchSale')->name('search-sale');
-Route::get('/contact', 'HomeController@contact')->name('contact');
+
+Route::get('/contact/{language?}', 'ContactController@index')
+->where([
+    'language' => '^(en|es)?$'
+])
+->name('contact');
 Route::post('/mail/sendcontact', 'EmailController@contact')->name('send_contact');
+
 Route::get('/logout', 'UserController@logout')->name('logout');
 
 Route::get('/page/{alias}/{language?}', 'PageController@index')

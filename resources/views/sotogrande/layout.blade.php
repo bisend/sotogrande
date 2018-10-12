@@ -43,30 +43,32 @@
 >
 
 @if ($page && $page != 'property')
-<div class="option-panel" data-callback-form>
-    <h2>Call Back</h2>
-    <div>
-        <form method="POST">
-            {{ csrf_field() }}
-            <div class="form-group">
-                <label for="callback-name">Name:</label>
-                <input type="text" id="callback-name" class="form-control" placeholder="Name" data-callback-name>
+    @if ($page != 'contact')
+        <div class="option-panel" data-callback-form>
+            <h2>Call Back</h2>
+            <div>
+                <form method="POST">
+                    {{ csrf_field() }}
+                    <div class="form-group">
+                        <label for="callback-name">Name:</label>
+                        <input type="text" id="callback-name" class="form-control" placeholder="Name" data-callback-name>
+                    </div>
+                    <div class="form-group">
+                        <label for="callback-phone">Phone Number:</label>
+                        <input type="phone" id="callback-phone" class="form-control" placeholder="Phone" data-callback-phone>
+                    </div>
+                    <div class="recaptcha-div">
+                        <span id="recaptcha-error-callback">Please complete the verification!</span>
+                        <div class="recaptcha-style" id="call-back-captcha"></div>
+                    </div>
+                    <button type="submit" class="submit-callback btn btn-color" data-callback-submit>Send</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label for="callback-phone">Phone Number:</label>
-                <input type="phone" id="callback-phone" class="form-control" placeholder="Phone" data-callback-phone>
+            <div class="setting-button">
+                <i class="fa fa-volume-control-phone"></i>
             </div>
-            <div class="recaptcha-div">
-                <span id="recaptcha-error-callback">Please complete the verification!</span>
-                <div class="recaptcha-style" id="call-back-captcha"></div>
-            </div>
-            <button type="submit" class="submit-callback btn btn-color" data-callback-submit>Send</button>
-        </form>
-    </div>
-    <div class="setting-button">
-        <i class="fa fa-volume-control-phone"></i>
-    </div>
-</div>
+        </div>
+    @endif
 @else
 <div class="option-panel-double-form" data-option-panel-double-form>
     <a class="close-option-panel-double-form" data-option-panel-double-form-close>

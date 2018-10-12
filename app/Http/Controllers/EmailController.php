@@ -47,7 +47,8 @@ class EmailController extends Controller
                 $mail_data['phone'] = $request->phone;
                 $mail_data['contact_msg'] = $static_data['strings']['contact_email_msg'];
                 $mail_data['site_name'] = $static_data['site_settings']['site_name'];
-                $mail_data['from'] = $static_data['strings']['from'];
+                // $mail_data['from'] = $static_data['strings']['from'];
+                $mail_data['from'] = $request->email;
                 $mail_data['to'] = $static_data['strings']['to'];
                 $mail_data['admin_email'] = $static_data['site_settings']['contact_email'];
                 $mail_data['site_name'] = $static_data['site_settings']['site_name'];

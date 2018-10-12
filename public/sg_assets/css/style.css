@@ -3791,7 +3791,8 @@ a {
     border: 1px solid #dedede;
     background: transparent;
     outline: 0;
-    color: #f6f6f6;
+    /* color: #f6f6f6; */
+    color: #777;
     height: 45px;
     border-radius: 3px;
 }
@@ -6599,7 +6600,7 @@ body.off-canvas-sidebar-open {
 }
 
 .incorrect-input {
-    border: 1px solid #d25151;
+    border: 1px solid #d25151 !important;
 }
 
 .option-panel-double-form {
@@ -6682,6 +6683,10 @@ body.off-canvas-sidebar-open {
 
 #successModal .modal-footer button {
     cursor: pointer;
+}
+
+#contact-page-map {
+    height: 350px;
 }
 
 

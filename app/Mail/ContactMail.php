@@ -31,7 +31,7 @@ class ContactMail extends Mailable
     public function build()
     {
         return $this->view('realstate.emails.contact')
-            ->from($this->data['admin_email'])
+            ->from($this->data['from'])
             ->subject($this->data['contact_msg']);
     }
 }
